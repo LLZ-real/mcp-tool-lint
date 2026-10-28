@@ -1,0 +1,10 @@
+﻿node_modules/
+dist/
+mcplint-*/
+test-out.txt
+pipe.txt
+batch.txt
+t.txt
+p.json
+*.log
+.DS_Store

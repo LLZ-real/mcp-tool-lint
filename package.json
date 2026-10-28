@@ -1,0 +1,40 @@
+{
+  "name": "mcp-tool-lint",
+  "version": "0.1.0",
+  "description": "Lint MCP tool schemas and descriptions for LLM-callability, then prove the fixes with an A/B benchmark.",
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "mcp-tool-lint": "./dist/cli.js"
+  },
+  "main": "./dist/index.js",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22.6.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "node --experimental-strip-types src/cli.ts",
+    "test": "node --experimental-strip-types --test test/*.test.ts",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "bench": "npm run build && node dist/cli.js bench fixtures/ --json > benchmark/results.json",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "llm",
+    "agents",
+    "tool-calling",
+    "linter"
+  ],
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "@types/node": "^22.10.0"
+  }
+}
