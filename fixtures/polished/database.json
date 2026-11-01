@@ -1,0 +1,138 @@
+{
+  "server": "database",
+  "source": "fixture:polished",
+  "tools": [
+    {
+      "name": "run_select_query",
+      "description": "Execute a read-only SELECT statement and return up to `max_rows` rows as an array of objects keyed by column name. Rejects INSERT/UPDATE/DELETE/DDL with an error — use run_write_query for those. Use this when you need to read data; use describe_table first if you do not know the schema.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sql": {
+            "type": "string",
+            "description": "A single SELECT statement. Must not contain multiple statements or a trailing semicolon followed by more SQL."
+          },
+          "max_rows": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10000,
+            "default": 100,
+            "description": "Truncate the result after this many rows."
+          },
+          "timeout_ms": {
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 300000,
+            "default": 30000,
+            "description": "Abort the query after this many milliseconds."
+          }
+        },
+        "required": ["sql"],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Run SELECT query",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "run_write_query",
+      "description": "Execute a single INSERT, UPDATE, or DELETE statement inside a transaction and commit it. Returns `{ rows_affected }`. Use this instead of run_select_query when you need to mutate data. DDL statements are rejected — use migrate_schema.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sql": {
+            "type": "string",
+            "description": "A single INSERT/UPDATE/DELETE statement. Parameter placeholders use `?` with positional values in `params`."
+          },
+          "params": {
+            "type": "array",
+            "items": { "type": ["string", "number", "boolean", "null"] },
+            "description": "Values bound to the `?` placeholders, in order.",
+            "examples": [["alice", 42]]
+          }
+        },
+        "required": ["sql"],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Run write query",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "describe_table",
+      "description": "Return the column definitions for one table: name, type, nullability, default, and primary-key flag. Use this before writing a query if you are unsure of the column names. Returns an array of column descriptors.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "table": {
+            "type": "string",
+            "description": "Table name, optionally schema-qualified as `schema.table`."
+          }
+        },
+        "required": ["table"],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Describe table",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_tables",
+      "description": "List every table in the database with its estimated row count and size in bytes. Returns an array of `{ name, schema, rows, bytes }`. Does not include views — use list_views for those.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "schema": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema to list tables from."
+          },
+          "include_system": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include tables owned by the database engine itself."
+          }
+        },
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "List tables",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_views",
+      "description": "List every view in the database with the SQL used to define it. Returns an array of `{ name, schema, definition }`. Use this when you need to understand a derived table rather than a physical one.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "schema": {
+            "type": "string",
+            "default": "public",
+            "description": "Schema to list views from."
+          }
+        },
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "List views",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    }
+  ]
+}

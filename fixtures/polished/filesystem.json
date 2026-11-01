@@ -1,0 +1,213 @@
+{
+  "server": "filesystem",
+  "source": "fixture:polished",
+  "tools": [
+    {
+      "name": "read_text_file",
+      "description": "Read a UTF-8 text file from disk and return its full contents as a string. Use this for source code, config, and markdown. Use read_file_bytes instead when the file may be binary or large.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "format": "path",
+            "description": "Absolute path of the file to read, e.g. /home/me/notes.txt."
+          },
+          "max_bytes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10485760,
+            "default": 1048576,
+            "description": "Truncate the returned content after this many bytes. Defaults to 1 MiB."
+          }
+        },
+        "required": ["path"],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Read text file",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "read_file_bytes",
+      "description": "Read a file as base64-encoded bytes without decoding it as text. Use this when the file may be binary (images, archives) or when exact byte fidelity matters. Returns an object with `encoding`, `size`, and `content`.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "format": "path",
+            "description": "Absolute path of the file to read."
+          },
+          "max_bytes": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Truncate the returned content after this many bytes."
+          }
+        },
+        "required": ["path"],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Read file bytes",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "write_text_file",
+      "description": "Write a string to a file, creating it if it does not exist. Returns the number of bytes written. Fails if the parent directory does not exist unless `create_parents` is true.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "format": "path",
+            "description": "Absolute path of the file to write."
+          },
+          "content": {
+            "type": "string",
+            "description": "UTF-8 text to write. Overwrites the file unless `append` is true."
+          },
+          "append": {
+            "type": "boolean",
+            "default": false,
+            "description": "Append to the file instead of overwriting it."
+          },
+          "create_parents": {
+            "type": "boolean",
+            "default": false,
+            "description": "Create missing parent directories before writing."
+          }
+        },
+        "required": ["path", "content"],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Write text file",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "delete_path",
+      "description": "Permanently delete a file or directory. This is not recoverable and does not use the trash. Use this only when the user explicitly asked to remove something. Set `recursive` to delete a non-empty directory.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "format": "path",
+            "description": "Absolute path to delete."
+          },
+          "recursive": {
+            "type": "boolean",
+            "default": false,
+            "description": "Delete a directory and everything inside it. Required for non-empty directories."
+          }
+        },
+        "required": ["path"],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Delete path",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_directory",
+      "description": "List the immediate children of a directory. Returns an array of `{ name, type, size }` where `type` is one of `file`, `directory`, or `symlink`. Does not recurse; use search_files for that.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "format": "path",
+            "description": "Absolute path of the directory to list."
+          },
+          "include_hidden": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include entries whose name starts with a dot."
+          }
+        },
+        "required": ["path"],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "List directory",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "search_files",
+      "description": "Recursively search for files by name pattern or content regex under a directory. Returns matching paths with line numbers for content matches. Use this instead of list_directory when you need to find something rather than enumerate.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "root": {
+            "type": "string",
+            "format": "path",
+            "description": "Absolute path of the directory to search from."
+          },
+          "name_pattern": {
+            "type": "string",
+            "description": "Glob matched against the basename, e.g. `*.ts`. Omit to match all files."
+          },
+          "content_regex": {
+            "type": "string",
+            "description": "JavaScript regular expression matched against file contents. Omit to search by name only."
+          },
+          "max_results": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000,
+            "default": 100,
+            "description": "Stop after this many matches."
+          }
+        },
+        "required": ["root"],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Search files",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "stat_path",
+      "description": "Return metadata for a path: size in bytes, modification time as an ISO-8601 string, permissions, and whether it is a file or directory. Returns an error if the path does not exist.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "format": "path",
+            "description": "Absolute path to inspect."
+          }
+        },
+        "required": ["path"],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Stat path",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    }
+  ]
+}

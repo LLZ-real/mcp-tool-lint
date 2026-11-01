@@ -1,0 +1,55 @@
+{
+  "server": "web-fetch",
+  "source": "fixture:baseline",
+  "tools": [
+    {
+      "name": "get",
+      "description": "Gets stuff.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "u": { "type": "string" }
+        },
+        "required": ["u"]
+      }
+    },
+    {
+      "name": "get_url",
+      "description": "Get a URL.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "url": { "type": "string" }
+        }
+      }
+    },
+    {
+      "name": "process",
+      "description": "Processes the response.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {},
+          "mode": { "type": "string" },
+          "raw": { "type": "boolean" },
+          "pretty": { "type": "boolean" },
+          "timeout": { "type": "number" },
+          "retries": { "type": "number" },
+          "headers": { "type": "object" },
+          "cookies": { "type": "object" },
+          "proxy": { "type": "string" },
+          "follow": { "type": "boolean" },
+          "max_size": { "type": "number" }
+        }
+      }
+    },
+    {
+      "name": "reset",
+      "description": "Resets the cache.",
+      "annotations": {
+        "readOnlyHint": true
+      },
+      "inputSchema": { "type": "object", "properties": {} }
+    }
+  ]
+}

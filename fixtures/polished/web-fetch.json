@@ -1,0 +1,105 @@
+{
+  "server": "web-fetch",
+  "source": "fixture:polished",
+  "tools": [
+    {
+      "name": "fetch_url",
+      "description": "Fetch a URL over HTTP(S) and return the response body as text. Follows redirects by default and decodes the charset from the Content-Type header. Use this for reading documentation pages or APIs; use fetch_url_bytes when the body is binary.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Absolute http:// or https:// URL to fetch."
+          },
+          "method": {
+            "type": "string",
+            "enum": ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE"],
+            "default": "GET",
+            "description": "HTTP method to use."
+          },
+          "headers": {
+            "type": "object",
+            "description": "Extra request headers as a flat string map, e.g. {\"Accept-Language\": \"zh-CN\"}.",
+            "additionalProperties": { "type": "string" }
+          },
+          "timeout_ms": {
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 120000,
+            "default": 30000,
+            "description": "Abort the request after this many milliseconds."
+          }
+        },
+        "required": ["url"],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Fetch URL",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "fetch_url_bytes",
+      "description": "Fetch a URL and return the raw body as base64 so binary content survives intact. Use this instead of fetch_url for images, PDFs, and archives. Returns `{ encoding, size, content }`.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Absolute URL to fetch."
+          },
+          "max_bytes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 52428800,
+            "default": 10485760,
+            "description": "Abort if the body exceeds this many bytes."
+          }
+        },
+        "required": ["url"],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Fetch URL bytes",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "clear_http_cache",
+      "description": "Delete every cached HTTP response for the current session, forcing the next fetch to hit the network. Destructive to cache state but never touches user data. Returns the number of entries evicted.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "scope": {
+            "type": "string",
+            "enum": ["session", "host", "all"],
+            "default": "session",
+            "description": "How much of the cache to clear. `host` clears one host; `all` clears every host."
+          },
+          "host": {
+            "type": "string",
+            "format": "hostname",
+            "description": "Required when `scope` is `host`; ignored otherwise."
+          }
+        },
+        "required": ["scope"],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Clear HTTP cache",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    }
+  ]
+}

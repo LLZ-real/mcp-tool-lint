@@ -1,0 +1,70 @@
+{
+  "server": "database",
+  "source": "fixture:baseline",
+  "tools": [
+    {
+      "name": "query",
+      "description": "Run a query.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sql": { "type": "string" }
+        },
+        "required": ["sql"]
+      }
+    },
+    {
+      "name": "exec",
+      "description": "Execute SQL.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sql": { "type": "string" }
+        },
+        "required": ["sql"]
+      }
+    },
+    {
+      "name": "drop_table",
+      "description": "Drops a table.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" }
+        },
+        "required": ["name"]
+      }
+    },
+    {
+      "name": "list_tables",
+      "description": "Lists tables.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "schema": { "type": "string" }
+        }
+      }
+    },
+    {
+      "name": "list_views",
+      "description": "Lists views.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "schema": { "type": "string" }
+        }
+      }
+    },
+    {
+      "name": "get_table",
+      "description": "Get table.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" }
+        },
+        "required": ["name"]
+      }
+    }
+  ]
+}
