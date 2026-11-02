@@ -99,7 +99,7 @@ Next: routing prompts + a real model + correlation.
 
 ## Posting checklist
 
-- [ ] Replace `<your name>` in LICENSE
+- [x] Replace `<your name>` in LICENSE
 - [ ] Record a 30s GIF: run on `fixtures/`, show raw → F, polished → A
 - [ ] Push to GitHub with a meaningful commit history (not one dump)
 - [ ] Add topics: `mcp`, `llm`, `agents`, `tool-calling`, `linter`
