@@ -22,13 +22,13 @@ jobs:
       - name: Typecheck
         run: npx tsc -p tsconfig.json --noEmit
       - name: Test
-        # --experimental-test-isolation=none keeps the runner in-process,
-        # which is both faster and works where spawning is restricted.
-        run: node --experimental-strip-types --test --experimental-test-isolation=none test/*.test.ts
+        # test/all.test.ts runs every suite in one process: faster, and it
+        # works where spawning child processes is restricted.
+        run: npm test
       - name: Build
         run: npm run build
       - name: Benchmark
-        run: node --experimental-strip-types benchmark/run.ts
-      - name: Self-lint the demo server
+        run: npm run bench
+      - name: Self-lint the bundled fixtures
         run: node dist/cli.js fixtures/ --format json --out report.json
         continue-on-error: true

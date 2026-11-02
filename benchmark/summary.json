@@ -1,47 +1,47 @@
 {
-  "generatedAt": "2026-11-02T07:17:27.056Z",
+  "generatedAt": "2026-11-02T12:19:22.233Z",
   "pairs": [
     {
       "api": "filesystem",
       "raw": {
-        "score": 41.3,
+        "score": 38.4,
         "grade": "F",
         "tools": 7
       },
       "polished": {
-        "score": 90.9,
+        "score": 99.3,
         "grade": "A",
-        "tools": 7
+        "tools": 6
       },
-      "gap": 49.6
+      "gap": 60.9
     },
     {
       "api": "web-fetch",
       "raw": {
-        "score": 26.5,
+        "score": 28.5,
         "grade": "F",
         "tools": 4
       },
       "polished": {
-        "score": 78,
-        "grade": "C",
+        "score": 100,
+        "grade": "A",
         "tools": 3
       },
-      "gap": 51.5
+      "gap": 71.5
     },
     {
       "api": "database",
       "raw": {
-        "score": 45.5,
+        "score": 46.8,
         "grade": "F",
         "tools": 6
       },
       "polished": {
-        "score": 80.4,
-        "grade": "B",
-        "tools": 5
+        "score": 92,
+        "grade": "A",
+        "tools": 6
       },
-      "gap": 34.9
+      "gap": 45.2
     }
   ],
   "failures": []
