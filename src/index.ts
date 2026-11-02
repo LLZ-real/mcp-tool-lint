@@ -1,7 +1,7 @@
 /**
  * Public library surface.
  *
- *   import { lint, scoreTool, RULES } from "mcp-tool-lint";
+ *   import { lint, scoreTool, RULES } from "@llz-real/mcp-tool-lint";
  */
 
 export * from "./types.ts";

@@ -145,15 +145,41 @@ test("schema/all-optional fires only when every param is optional", () => {
   assert.ok(ids(lintTool(allOptional, [])).includes("schema/all-optional"));
 });
 
+test("schema/bare-object treats a schema-valued additionalProperties as constrained", () => {
+  const constrained = tool({
+    name: "send_request",
+    description: "Send an HTTP request and return the response body as text.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        headers: { type: "object", additionalProperties: { type: "string" }, description: "Request headers." },
+      },
+      required: ["headers"],
+    },
+  });
+  assert.ok(!ids(lintTool(constrained, [])).includes("schema/bare-object"));
+
+  const bare = tool({
+    name: "send_request",
+    description: "Send an HTTP request and return the response body as text.",
+    inputSchema: {
+      type: "object",
+      properties: { meta: { type: "object", description: "Free-form metadata." } },
+      required: ["meta"],
+    },
+  });
+  assert.ok(ids(lintTool(bare, [])).includes("schema/bare-object"));
+});
+
 // ───────────────────────────── ambiguity ─────────────────────────────
 
-test("ambiguity/name-collision fires once per pair, not twice", () => {
+test("ambiguity/name-collision is reported on both tools of the pair", () => {
   const a = tool({ name: "read_file", description: "Read a UTF-8 file and return its contents." });
   const b = tool({ name: "read_file_v2", description: "Read a UTF-8 file and return its contents." });
-  const all = lintTool(a, [a, b]).filter((f) => f.ruleId === "ambiguity/name-collision");
-  const both = [a, b].flatMap((t) => lintTool(t, [a, b])).filter((f) => f.ruleId === "ambiguity/name-collision");
-  assert.equal(all.length, 1);
-  assert.equal(both.length, 1, "the pair must be reported exactly once across both tools");
+  const onA = lintTool(a, [a, b]).filter((f) => f.ruleId === "ambiguity/name-collision");
+  const onB = lintTool(b, [a, b]).filter((f) => f.ruleId === "ambiguity/name-collision");
+  assert.equal(onA.length, 1);
+  assert.equal(onB.length, 1, "both tools must carry the pair: routing risk exists on both sides");
 });
 
 test("ambiguity/vague-verb fires on handle/process/do", () => {
@@ -216,6 +242,22 @@ test("safety/open-world-undeclared still fires on genuinely remote tools", () =>
     annotations: { readOnlyHint: true },
   });
   assert.ok(ids(lintTool(remote, [])).includes("safety/open-world-undeclared"));
+});
+
+test("safety/open-world-undeclared distinguishes domain nouns from egress", () => {
+  // `clear_http_cache` operates on the HTTP cache but never reaches the
+  // network itself: a protocol noun in the *name* is not egress evidence.
+  const cacheClearer = tool({
+    name: "clear_http_cache",
+    description:
+      "Delete every cached response entry for the current session, so the next lookup revalidates with its origin.",
+    annotations: { readOnlyHint: false, destructiveHint: true, openWorldHint: false },
+  });
+  assert.ok(!ids(lintTool(cacheClearer, [])).includes("safety/open-world-undeclared"));
+
+  // A name that says the tool sends/receives is evidence again.
+  const undeclared = tool({ name: "download_url", description: "Download a URL and save the bytes." });
+  assert.ok(ids(lintTool(undeclared, [])).includes("safety/open-world-undeclared"));
 });
 
 // ───────────────────────────── ergonomics ─────────────────────────────

@@ -2,7 +2,7 @@ import { strict as assert } from "node:assert";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { parseToolsList, normalizeTool, probeServerBatch, McpProbeError } from "../src/probe.ts";
+import { parseToolsList, normalizeTool, probeServerBatch, probeServerPipe, McpProbeError } from "../src/probe.ts";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const demoServer = join(here, "..", "fixtures", "demo-server.mjs");
@@ -51,5 +51,18 @@ test("probeServerBatch surfaces a clear error when the command cannot run", asyn
   await assert.rejects(
     () => probeServerBatch({ command: "definitely-not-a-real-binary-xyz" }, 5_000, here),
     (e: Error) => e instanceof McpProbeError || /spawn|ENOENT/i.test(e.message),
+  );
+});
+
+test("probeServerPipe fails fast instead of letting in-flight requests time out", async () => {
+  const started = Date.now();
+  await assert.rejects(
+    () => probeServerPipe({ command: "definitely-not-a-real-binary-xyz" }, 25_000),
+    (e: Error) => e instanceof McpProbeError || /spawn|EPERM|ENOENT/i.test(e.message),
+  );
+  const elapsed = Date.now() - started;
+  assert.ok(
+    elapsed < 10_000,
+    `rejection took ${elapsed}ms — a dead server must reject pending requests immediately, not after the 25s timeout`,
   );
 });

@@ -41,6 +41,7 @@ const STRONG_VERBS = new Set([
   "install", "uninstall", "upgrade", "migrate", "rollback",
   "describe", "explain", "preview", "plan", "apply",
   "stat", "glob", "grep", "walk", "enumerate", "inspect",
+  "select", "drop", "reset", "clear", "upsert",
   "truncate", "slice", "split", "join", "replace", "strip", "trim",
   "validate", "sanitize", "escape", "quote", "wrap", "unwrap",
   "resize", "crop", "rotate", "flip", "composite", "blur", "sharpen",
@@ -170,6 +171,11 @@ function sameObjectClass(a: string, b: string): boolean {
  * What actually causes misselection is **same verb, overlapping object**:
  * the model knows it must read something, and both tools are readers.
  * So we key on the leading verb plus the object nouns.
+ *
+ * One refinement: when the objects share only a head noun and the naming
+ * words on both sides are action verbs (`run_select_query` vs
+ * `run_write_query`), the pair is distinguishable — see the compound-noun
+ * branch below.
  */
 export function confusability(a: string, b: string): number {
   if (a === b) return 0;
@@ -194,8 +200,27 @@ export function confusability(a: string, b: string): number {
     }
     // Same verb + objects in the same semantic class = genuinely confusable,
     // regardless of spelling: `delete_path` vs `delete_file`.
-    if (objA.some((a) => objB.some((b) => sameObjectClass(a, b)))) {
-      return 0.75;
+    const sharedClass = objA.some((a) => objB.some((b) => a !== b && sameObjectClass(a, b)));
+    if (sharedClass) return 0.75;
+
+    const sharedWord = objA.some((w) => objB.includes(w));
+    if (sharedWord) {
+      // Compound-noun disambiguation. The shared word is the head noun
+      // (`query` in `run_select_query` / `run_write_query`) and the differing
+      // words are what actually names the tool. When *both* sides differ only
+      // by strong action verbs (select vs write), the modifier carries the
+      // semantics and the pair is distinguishable. When the differing words
+      // are format/noun words (`text` vs `bytes` in `read_text_file` /
+      // `read_file_bytes`) or a version suffix (`v2`), they do not separate
+      // the pair and it stays confusable.
+      const diffA = objA.filter((w) => !objB.includes(w));
+      const diffB = objB.filter((w) => !objA.includes(w));
+      const distinguishedByVerb =
+        diffA.length > 0 &&
+        diffB.length > 0 &&
+        diffA.every((w) => isActionVerb(w)) &&
+        diffB.every((w) => isActionVerb(w));
+      return distinguishedByVerb ? 0.5 : 0.75;
     }
     // Same verb, different object classes: distinguishable by object alone,
     // but the shared verb still leaves some room for error.
@@ -229,14 +254,44 @@ export function hasStrongVerb(name: string): boolean {
   return splitWords(name).some((w) => STRONG_VERBS.has(w));
 }
 
+/**
+ * True when a single word names an action rather than a thing. Used by
+ * `confusability` to tell compound nouns apart: `select` and `write` in
+ * `run_select_query` / `run_write_query` are verbs, while `text` and `bytes`
+ * in `read_text_file` / `read_file_bytes` are format nouns.
+ */
+export function isActionVerb(word: string): boolean {
+  return STRONG_VERBS.has(word);
+}
+
 export function containsDestructiveWord(name: string, description = ""): boolean {
   const words = [...splitWords(name), ...splitWords(description)];
   return words.some((w) => DESTRUCTIVE_WORDS.has(w));
 }
 
+/**
+ * Verbs that imply the tool itself performs network egress. A protocol noun
+ * in the tool *name* (`clear_http_cache`) says which domain the tool operates
+ * on, not that the call reaches the internet; it only counts as evidence when
+ * the name also says the tool sends or receives (`fetch_url`, `download_file`,
+ * `search_web`).
+ */
+const EGRESS_VERBS = new Set([
+  "fetch", "get", "request", "send", "post", "put", "upload", "download",
+  "call", "query", "search", "browse", "crawl", "scrape", "poll", "stream",
+  "connect", "ping", "sync",
+]);
+
 export function containsNetworkWord(name: string, description = ""): boolean {
-  const words = [...splitWords(name), ...splitWords(description)];
-  if (words.some((w) => NETWORK_WORDS.has(w))) return true;
+  const nameWords = splitWords(name);
+  const descWords = splitWords(description);
+  const words = [...nameWords, ...descWords];
+  // Network words in the *description* are always evidence.
+  if (descWords.some((w) => NETWORK_WORDS.has(w))) return true;
+  // Network words in the *name* are evidence only with an egress verb.
+  if (nameWords.some((w) => NETWORK_WORDS.has(w)) && nameWords.some((w) => EGRESS_VERBS.has(w))) {
+    return true;
+  }
   // Ambiguous verbs only count when nothing local is in play.
   const local = words.some((w) => FS_WORDS.has(w));
   return !local && words.some((w) => NETWORK_WORDS_AMBIGUOUS.has(w));

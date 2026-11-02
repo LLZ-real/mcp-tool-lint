@@ -31,6 +31,7 @@ const HELP = `
     --verbose                     show every finding
     --max <n>                     findings per tool         (default: 3)
     --fail-under <score>          exit 1 if average < n     (default: 0)
+    --color                       force ANSI colors (default: only on a TTY)
     --no-color                    disable ANSI colors
     --transport <auto|pipe|batch> MCP transport             (default: auto)
     --timeout <ms>                MCP handshake timeout     (default: 20000)
@@ -76,6 +77,7 @@ function parse(argv: string[]): Parsed {
       max: { type: "string", default: "3" },
       "fail-under": { type: "string", default: "0" },
       "no-color": { type: "boolean", default: false },
+      color: { type: "boolean", default: false },
       transport: { type: "string", default: "auto" },
       timeout: { type: "string", default: "20000" },
       mcp: { type: "string" },
@@ -100,8 +102,8 @@ function parse(argv: string[]): Parsed {
     out: values.out as string | undefined,
     verbose: Boolean(values.verbose),
     max: toInt(values.max as string, "--max"),
-    failUnder: Number(values["fail-under"]),
-    color: !values["no-color"] && process.stdout.isTTY !== false,
+    failUnder: toScore(values["fail-under"] as string, "--fail-under"),
+    color: values.color ? true : !values["no-color"] && process.stdout.isTTY === true,
     transport,
     timeout: toInt(values.timeout as string, "--timeout"),
     mcp: values.mcp as string | undefined,
@@ -116,6 +118,12 @@ function parse(argv: string[]): Parsed {
 function toInt(s: string, flag: string): number {
   const n = Number.parseInt(s, 10);
   if (Number.isNaN(n) || n < 0) throw new UsageError(`${flag} must be a non-negative integer`);
+  return n;
+}
+
+function toScore(s: string, flag: string): number {
+  const n = Number(s);
+  if (!Number.isFinite(n) || n < 0) throw new UsageError(`${flag} must be a non-negative number (got "${s}")`);
   return n;
 }
 

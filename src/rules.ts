@@ -169,7 +169,7 @@ const rules: Rule[] = [
       return [
         {
           message: `None of the required params (${req.join(", ")}) appear in the description.`,
-          fix: `Either mention them, e.g. "${req[0]} is the absolute path to read.", or give each one a \`description\` in the schema.`,
+          fix: `Mention ${unmentioned.map((p) => `\`${p}\``).join(", ")} in the description, or give ${unmentioned.length > 1 ? "them" : "it"} a \`description\` in the schema.`,
           path: "description",
         },
       ];
@@ -321,7 +321,13 @@ const rules: Rule[] = [
     check({ tool }) {
       const out: RuleFinding[] = [];
       for (const [name, s] of propsOf(tool)) {
-        if (s.type === "object" && !s.properties && s.additionalProperties !== false) {
+        // `additionalProperties: false` closes the shape, and a schema-valued
+        // `additionalProperties` (e.g. `{"type":"string"}`) constrains it too;
+        // only `true`/`{}`/missing leaves the object unconstrained.
+        const ap = s.additionalProperties;
+        const constrained =
+          ap === false || (typeof ap === "object" && ap !== null && Object.keys(ap).length > 0);
+        if (s.type === "object" && !s.properties && !constrained) {
           out.push({
             message: `Param \`${name}\` is an unconstrained object.`,
             fix: 'Declare `"properties"`, or set `"additionalProperties": false` if the shape is fixed.',
@@ -367,8 +373,8 @@ const rules: Rule[] = [
       const out: RuleFinding[] = [];
       for (const other of siblings) {
         if (other.name === tool.name) continue;
-        // Only report each pair once: the lexicographically smaller name owns it.
-        if (other.name < tool.name) continue;
+        // Symmetric on purpose: both names in the pair are risky to route to,
+        // so both tools carry the finding and the critical ceiling.
         const c = confusability(tool.name, other.name);
         if (c >= 0.6) {
           out.push({
@@ -464,7 +470,7 @@ const rules: Rule[] = [
       if (tool.annotations?.destructiveHint === true) return [];
       return [
         {
-          message: `Name/description implies destruction but \`destructiveHint\` is not set.`,
+          message: `Name/description implies destruction but \`destructiveHint\` is not \`true\`.`,
           fix: 'Set `"annotations": { "destructiveHint": true }` so clients can gate it behind confirmation.',
           path: "annotations",
         },
@@ -532,7 +538,7 @@ const rules: Rule[] = [
       if (tool.annotations?.openWorldHint === true) return [];
       return [
         {
-          message: "Tool appears to reach the network but `openWorldHint` is not set.",
+          message: "Tool appears to reach the network but `openWorldHint` is not `true`.",
           fix: 'Set `"openWorldHint": true`.',
           path: "annotations",
         },
@@ -640,7 +646,7 @@ function describeFromSchema(name: string, s: JSONSchema): string {
     case "integer":
       return `The ${human} as a number.`;
     case "boolean":
-      return `Whether to ${human}.`;
+      return `Whether to enable \`${name}\`.`;
     case "array":
       return `List of ${human.replace(/s$/, "")} values.`;
     case "object":

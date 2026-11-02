@@ -14,7 +14,7 @@
  */
 
 import { spawn } from "node:child_process";
-import { mkdtempSync, openSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { closeSync, mkdtempSync, openSync, readFileSync, rmdirSync, unlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type { JSONSchema, McpTool } from "./types.ts";
@@ -112,18 +112,27 @@ export async function probeServerPipe(
   timeoutMs = 20_000,
 ): Promise<{ tools: McpTool[]; serverInfo: unknown }> {
   const sp = spawnOptions(cmd);
-  const child = spawn(sp.file, sp.args, { ...sp.opts, stdio: ["pipe", "pipe", "pipe"] });
+  let child;
+  try {
+    child = spawn(sp.file, sp.args, { ...sp.opts, stdio: ["pipe", "pipe", "pipe"] });
+  } catch (e) {
+    throw spawnError(e);
+  }
 
   let buf = "";
   let stderr = "";
-  const pending = new Map<number, (r: JsonRpcResponse) => void>();
+  const pending = new Map<number, { resolve: (r: JsonRpcResponse) => void; reject: (e: Error) => void }>();
   let nextId = 1;
   let closed = false;
 
+  // Writes to a dead child surface as an async stdin error; the in-flight
+  // requests are rejected via fail(), so this only keeps the process alive.
+  child.stdin.on("error", () => {});
+
+  /** Reject every in-flight request immediately — never leave callers waiting on the timeout. */
   const fail = (err: Error) => {
-    for (const [, reject] of pending) void reject;
+    for (const [, p] of pending) p.reject(err);
     pending.clear();
-    void err;
   };
 
   child.stdout.setEncoding("utf8");
@@ -141,10 +150,10 @@ export async function probeServerPipe(
         continue; // servers sometimes log non-JSON to stdout; ignore it
       }
       const id = typeof msg.id === "number" ? msg.id : Number(msg.id);
-      const resolve = pending.get(id);
-      if (resolve) {
+      const entry = pending.get(id);
+      if (entry) {
         pending.delete(id);
-        resolve(msg);
+        entry.resolve(msg);
       }
     }
   });
@@ -154,10 +163,16 @@ export async function probeServerPipe(
     stderr += c;
   });
 
-  const onClose = new Promise<void>((resolve) => child.on("close", () => resolve()));
+  const onClose = new Promise<void>((resolve) =>
+    child.on("close", (code) => {
+      closed = true;
+      fail(new McpProbeError(`server exited (code ${code}) before responding`));
+      resolve();
+    }),
+  );
   child.on("error", (e: Error) => {
     closed = true;
-    fail(e);
+    fail(spawnError(e));
   });
 
   const request = (method: string, params?: unknown): Promise<unknown> =>
@@ -169,16 +184,28 @@ export async function probeServerPipe(
         reject(new McpProbeError(`timeout after ${timeoutMs}ms waiting for ${method}`));
       }, timeoutMs);
 
-      pending.set(id, (msg) => {
-        clearTimeout(timer);
-        if (msg.error) {
-          reject(new McpProbeError(`${method} failed: ${msg.error.message} (code ${msg.error.code})`));
-        } else {
-          resolve(msg.result);
-        }
+      pending.set(id, {
+        resolve: (msg) => {
+          clearTimeout(timer);
+          if (msg.error) {
+            reject(new McpProbeError(`${method} failed: ${msg.error.message} (code ${msg.error.code})`));
+          } else {
+            resolve(msg.result);
+          }
+        },
+        reject: (err) => {
+          clearTimeout(timer);
+          reject(err);
+        },
       });
 
-      child.stdin.write(JSON.stringify({ jsonrpc: "2.0", id, method, params }) + "\n");
+      try {
+        child.stdin.write(JSON.stringify({ jsonrpc: "2.0", id, method, params }) + "\n");
+      } catch (e) {
+        pending.delete(id);
+        clearTimeout(timer);
+        reject(e instanceof Error ? e : new Error(String(e)));
+      }
     });
 
   const notify = (method: string, params?: unknown) => {
@@ -200,11 +227,7 @@ export async function probeServerPipe(
         ? `\n--- server stderr ---\n${stderr.trim().slice(0, 2000)}`
         : "";
     if ((e as NodeJS.ErrnoException).code === "EPERM") {
-      throw new McpProbeError(
-        "cannot spawn the server: the sandbox forbids opening pipes to child processes.\n" +
-          "Run the probe outside the sandbox, or use --probe-batch.",
-        e,
-      );
+      throw spawnError(e);
     }
     throw e instanceof McpProbeError ? new McpProbeError(e.message + hint, e.cause) : new McpProbeError(String(e) + hint, e);
   } finally {
@@ -212,6 +235,23 @@ export async function probeServerPipe(
     setTimeout(() => child.kill(), 250).unref?.();
     await Promise.race([onClose, new Promise((r) => setTimeout(r, 1000))]);
   }
+}
+
+/**
+ * Wrap child-process spawn failures. `EPERM` specifically means the
+ * environment forbids pipes to child processes; the batch transport
+ * (`--transport batch`) exists for exactly this case.
+ */
+function spawnError(e: unknown): Error {
+  const err = e instanceof Error ? e : new Error(String(e));
+  if ((e as NodeJS.ErrnoException).code === "EPERM") {
+    return new McpProbeError(
+      "cannot spawn the server: the sandbox forbids opening pipes to child processes.\n" +
+        "Run the probe outside the sandbox, or use --transport batch.",
+      err,
+    );
+  }
+  return err;
 }
 
 // ───────────────────────────── batch transport ────────────────────────────
@@ -257,6 +297,16 @@ export async function probeServerBatch(
     await new Promise<void>((resolve, reject) => {
       const sp = spawnOptions(cmd);
       const child = spawn(sp.file, sp.args, { ...sp.opts, stdio: [fin, fout, ferr] });
+      // The descriptors were handed to the child; close the parent's copies
+      // immediately. On Windows an open handle keeps the scratch files locked
+      // and the cleanup below cannot delete them.
+      for (const fd of [fin, fout, ferr]) {
+        try {
+          closeSync(fd);
+        } catch {
+          /* already closed */
+        }
+      }
       const timer = setTimeout(() => {
         child.kill();
         reject(new McpProbeError(`timeout after ${timeoutMs}ms`));
@@ -297,8 +347,29 @@ export async function probeServerBatch(
 
     return { tools: parseToolsList(list.result), serverInfo: init.result };
   } finally {
-    rmSync(dir, { recursive: true, force: true });
+    // `rmSync` recursive silently fails under some file sandboxes (it reports
+    // success and leaves the files behind); explicit unlink + rmdir is
+    // reliable. Failures are reported, never swallowed silently.
+    for (const f of [inPath, outPath, errPath]) {
+      try {
+        unlinkSync(f);
+      } catch (e) {
+        warnCleanup(f, e);
+      }
+    }
+    try {
+      rmdirSync(dir);
+    } catch (e) {
+      warnCleanup(dir, e);
+    }
   }
+}
+
+/** Report a scratch-file cleanup failure; `ENOENT` is already-clean, not an error. */
+function warnCleanup(path: string, e: unknown): void {
+  const code = (e as NodeJS.ErrnoException).code ?? "EUNKNOWN";
+  if (code === "ENOENT") return;
+  process.stderr.write(`mcp-tool-lint: could not clean up scratch file ${path} (${code})\n`);
 }
 
 function safeRead(p: string): string {

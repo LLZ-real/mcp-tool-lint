@@ -6,9 +6,10 @@
  *
  * Why additive rather than a weighted average of dimension scores:
  * a weighted average is far too forgiving. A tool whose description is
- * literally "Read a file." has describing=57 but still scored 81/100 under
- * the old model, because the other four dimensions averaged the failure away.
- * Deductions are what a reader actually cares about, so they accumulate.
+ * literally "Read a file." has describing=61 and would score 83.7/100 under
+ * a weighted mean of the same dimension scores, because the other four
+ * dimensions average the failure away. Deductions are what a reader actually
+ * cares about, so they accumulate (that tool scores 47/100 additively).
  *
  * Why the per-dimension cap: ten minor `info` hits in the same dimension
  * should not outweigh one critical `error` elsewhere. Capping each dimension

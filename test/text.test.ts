@@ -1,6 +1,7 @@
 import { strict as assert } from "node:assert";
 import { test } from "node:test";
 import {
+  areConfusable,
   confusability,
   firstWord,
   genericPhraseHits,
@@ -64,6 +65,18 @@ test("confusability keys on same-verb/overlapping-object, not spelling", () => {
   assert.ok(confusability("search_files", "stat_path") < 0.6);
   // A tool is never confusable with itself.
   assert.equal(confusability("read_file", "read_file"), 0);
+});
+
+test("confusability separates compound nouns whose modifiers are verbs", () => {
+  // `run_select_query` / `run_write_query` share only the head noun `query`;
+  // `select` vs `write` are the actual names of the tools.
+  assert.equal(confusability("run_select_query", "run_write_query"), 0.5);
+  assert.ok(!areConfusable("run_select_query", "run_write_query"));
+  assert.ok(!areConfusable("update_record", "delete_record"));
+  // Format nouns and version suffixes do NOT separate the pair: the shared
+  // object word still makes them confusable.
+  assert.equal(confusability("read_file", "read_file_v2"), 0.75);
+  assert.equal(confusability("read_text_file", "read_file_bytes"), 0.75);
 });
 
 test("genericPhraseHits matches whole phrases, not substrings", () => {
