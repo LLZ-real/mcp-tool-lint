@@ -1,0 +1,34 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node: ["22", "24"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm install --no-audit --no-fund
+      - name: Typecheck
+        run: npx tsc -p tsconfig.json --noEmit
+      - name: Test
+        # --experimental-test-isolation=none keeps the runner in-process,
+        # which is both faster and works where spawning is restricted.
+        run: node --experimental-strip-types --test --experimental-test-isolation=none test/*.test.ts
+      - name: Build
+        run: npm run build
+      - name: Benchmark
+        run: node --experimental-strip-types benchmark/run.ts
+      - name: Self-lint the demo server
+        run: node dist/cli.js fixtures/ --format json --out report.json
+        continue-on-error: true
