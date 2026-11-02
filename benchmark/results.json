@@ -1,0 +1,1978 @@
+{
+  "version": "0.1.0",
+  "generatedAt": "2026-11-02T07:14:48.096Z",
+  "servers": [
+    {
+      "server": "database",
+      "source": "fixture:polished",
+      "tools": [
+        {
+          "tool": "run_select_query",
+          "total": 40,
+          "byDimension": {
+            "describing": 100,
+            "schema": 100,
+            "ambiguity": 70,
+            "safety": 100,
+            "ergonomics": 100
+          },
+          "findings": [
+            {
+              "ruleId": "ambiguity/name-collision",
+              "dimension": "ambiguity",
+              "severity": "error",
+              "tool": "run_select_query",
+              "penalty": 20,
+              "message": "`run_select_query` and `run_write_query` are 75% confusable — same verb, overlapping object.",
+              "fix": "Rename one to reflect the distinguishing dimension (scope, target, format), or merge them behind a `mode` enum.",
+              "path": "name"
+            },
+            {
+              "ruleId": "ambiguity/vague-verb",
+              "dimension": "ambiguity",
+              "severity": "warning",
+              "tool": "run_select_query",
+              "penalty": 10,
+              "message": "Name starts with vague verb `run`.",
+              "fix": "Use a specific verb: read/write/create/delete/search/list/convert/...",
+              "path": "name"
+            }
+          ]
+        },
+        {
+          "tool": "run_write_query",
+          "total": 82,
+          "byDimension": {
+            "describing": 100,
+            "schema": 92,
+            "ambiguity": 90,
+            "safety": 100,
+            "ergonomics": 100
+          },
+          "findings": [
+            {
+              "ruleId": "ambiguity/vague-verb",
+              "dimension": "ambiguity",
+              "severity": "warning",
+              "tool": "run_write_query",
+              "penalty": 10,
+              "message": "Name starts with vague verb `run`.",
+              "fix": "Use a specific verb: read/write/create/delete/search/list/convert/...",
+              "path": "name"
+            },
+            {
+              "ruleId": "schema/weak-param-name",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "run_write_query",
+              "penalty": 8,
+              "message": "Param name `params` is not self-describing.",
+              "fix": "Rename to what it holds, e.g. `file_path`, `query`, `max_results`.",
+              "path": "inputSchema.properties.params"
+            }
+          ]
+        },
+        {
+          "tool": "describe_table",
+          "total": 100,
+          "byDimension": {
+            "describing": 100,
+            "schema": 100,
+            "ambiguity": 100,
+            "safety": 100,
+            "ergonomics": 100
+          },
+          "findings": []
+        },
+        {
+          "tool": "list_tables",
+          "total": 92,
+          "byDimension": {
+            "describing": 100,
+            "schema": 92,
+            "ambiguity": 100,
+            "safety": 100,
+            "ergonomics": 100
+          },
+          "findings": [
+            {
+              "ruleId": "schema/all-optional",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "list_tables",
+              "penalty": 8,
+              "message": "All 2 params are optional; nothing anchors a minimal call.",
+              "fix": "Mark the semantically necessary one(s) as required.",
+              "path": "inputSchema.required"
+            }
+          ]
+        },
+        {
+          "tool": "list_views",
+          "total": 88,
+          "byDimension": {
+            "describing": 96,
+            "schema": 92,
+            "ambiguity": 100,
+            "safety": 100,
+            "ergonomics": 100
+          },
+          "findings": [
+            {
+              "ruleId": "schema/all-optional",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "list_views",
+              "penalty": 8,
+              "message": "All 1 params are optional; nothing anchors a minimal call.",
+              "fix": "Mark the semantically necessary one(s) as required.",
+              "path": "inputSchema.required"
+            },
+            {
+              "ruleId": "desc/generic",
+              "dimension": "describing",
+              "severity": "warning",
+              "tool": "list_views",
+              "penalty": 4,
+              "message": "Generic filler: \"used to\".",
+              "fix": "Replace filler with the concrete object and effect, e.g. \"Reads a UTF-8 file from disk and returns its contents\".",
+              "path": "description"
+            }
+          ]
+        }
+      ],
+      "averageScore": 80.4
+    },
+    {
+      "server": "filesystem",
+      "source": "fixture:polished",
+      "tools": [
+        {
+          "tool": "read_text_file",
+          "total": 100,
+          "byDimension": {
+            "describing": 100,
+            "schema": 100,
+            "ambiguity": 100,
+            "safety": 100,
+            "ergonomics": 100
+          },
+          "findings": []
+        },
+        {
+          "tool": "read_file_bytes",
+          "total": 40,
+          "byDimension": {
+            "describing": 100,
+            "schema": 100,
+            "ambiguity": 80,
+            "safety": 100,
+            "ergonomics": 100
+          },
+          "findings": [
+            {
+              "ruleId": "ambiguity/name-collision",
+              "dimension": "ambiguity",
+              "severity": "error",
+              "tool": "read_file_bytes",
+              "penalty": 20,
+              "message": "`read_file_bytes` and `read_text_file` are 75% confusable — same verb, overlapping object.",
+              "fix": "Rename one to reflect the distinguishing dimension (scope, target, format), or merge them behind a `mode` enum.",
+              "path": "name"
+            }
+          ]
+        },
+        {
+          "tool": "write_text_file",
+          "total": 100,
+          "byDimension": {
+            "describing": 100,
+            "schema": 100,
+            "ambiguity": 100,
+            "safety": 100,
+            "ergonomics": 100
+          },
+          "findings": []
+        },
+        {
+          "tool": "delete_path",
+          "total": 96,
+          "byDimension": {
+            "describing": 96,
+            "schema": 100,
+            "ambiguity": 100,
+            "safety": 100,
+            "ergonomics": 100
+          },
+          "findings": [
+            {
+              "ruleId": "desc/no-return",
+              "dimension": "describing",
+              "severity": "info",
+              "tool": "delete_path",
+              "penalty": 4,
+              "message": "Description never states what the tool returns.",
+              "fix": "Append a returns clause, e.g. \"Returns the file contents as a UTF-8 string.\"",
+              "path": "description"
+            }
+          ]
+        },
+        {
+          "tool": "list_directory",
+          "total": 100,
+          "byDimension": {
+            "describing": 100,
+            "schema": 100,
+            "ambiguity": 100,
+            "safety": 100,
+            "ergonomics": 100
+          },
+          "findings": []
+        },
+        {
+          "tool": "search_files",
+          "total": 100,
+          "byDimension": {
+            "describing": 100,
+            "schema": 100,
+            "ambiguity": 100,
+            "safety": 100,
+            "ergonomics": 100
+          },
+          "findings": []
+        },
+        {
+          "tool": "stat_path",
+          "total": 100,
+          "byDimension": {
+            "describing": 100,
+            "schema": 100,
+            "ambiguity": 100,
+            "safety": 100,
+            "ergonomics": 100
+          },
+          "findings": []
+        }
+      ],
+      "averageScore": 90.9
+    },
+    {
+      "server": "web-fetch",
+      "source": "fixture:polished",
+      "tools": [
+        {
+          "tool": "fetch_url",
+          "total": 40,
+          "byDimension": {
+            "describing": 100,
+            "schema": 90,
+            "ambiguity": 80,
+            "safety": 100,
+            "ergonomics": 100
+          },
+          "findings": [
+            {
+              "ruleId": "ambiguity/name-collision",
+              "dimension": "ambiguity",
+              "severity": "error",
+              "tool": "fetch_url",
+              "penalty": 20,
+              "message": "`fetch_url` and `fetch_url_bytes` are 75% confusable — same verb, overlapping object.",
+              "fix": "Rename one to reflect the distinguishing dimension (scope, target, format), or merge them behind a `mode` enum.",
+              "path": "name"
+            },
+            {
+              "ruleId": "schema/bare-object",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "fetch_url",
+              "penalty": 10,
+              "message": "Param `headers` is an unconstrained object.",
+              "fix": "Declare `\"properties\"`, or set `\"additionalProperties\": false` if the shape is fixed.",
+              "path": "inputSchema.properties.headers"
+            }
+          ]
+        },
+        {
+          "tool": "fetch_url_bytes",
+          "total": 100,
+          "byDimension": {
+            "describing": 100,
+            "schema": 100,
+            "ambiguity": 100,
+            "safety": 100,
+            "ergonomics": 100
+          },
+          "findings": []
+        },
+        {
+          "tool": "clear_http_cache",
+          "total": 94,
+          "byDimension": {
+            "describing": 100,
+            "schema": 100,
+            "ambiguity": 100,
+            "safety": 94,
+            "ergonomics": 100
+          },
+          "findings": [
+            {
+              "ruleId": "safety/open-world-undeclared",
+              "dimension": "safety",
+              "severity": "info",
+              "tool": "clear_http_cache",
+              "penalty": 6,
+              "message": "Tool appears to reach the network but `openWorldHint` is not set.",
+              "fix": "Set `\"openWorldHint\": true`.",
+              "path": "annotations"
+            }
+          ]
+        }
+      ],
+      "averageScore": 78
+    },
+    {
+      "server": "database",
+      "source": "fixture:baseline",
+      "tools": [
+        {
+          "tool": "query",
+          "total": 47,
+          "byDimension": {
+            "describing": 61,
+            "schema": 91,
+            "ambiguity": 100,
+            "safety": 95,
+            "ergonomics": 100
+          },
+          "findings": [
+            {
+              "ruleId": "desc/too-short",
+              "dimension": "describing",
+              "severity": "error",
+              "tool": "query",
+              "penalty": 25,
+              "message": "Description is only 12 chars (\"Run a query.\") — too short to distinguish from sibling tools.",
+              "fix": "Expand to at least one sentence: what it does + what it returns.",
+              "path": "description"
+            },
+            {
+              "ruleId": "desc/params-undocumented",
+              "dimension": "describing",
+              "severity": "warning",
+              "tool": "query",
+              "penalty": 10,
+              "message": "None of the required params (sql) appear in the description.",
+              "fix": "Either mention them, e.g. \"sql is the absolute path to read.\", or give each one a `description` in the schema.",
+              "path": "description"
+            },
+            {
+              "ruleId": "schema/param-undescribed",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "query",
+              "penalty": 6,
+              "message": "Param `sql` has no description.",
+              "fix": "Add \"description\": \"The sql.\"",
+              "path": "inputSchema.properties.sql"
+            },
+            {
+              "ruleId": "schema/unbounded-string",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "query",
+              "penalty": 3,
+              "message": "String param `sql` has no `format`, `pattern`, `enum`, `examples`, or description.",
+              "fix": "Add \"format\" (e.g. \"uri\", \"date-time\", \"path\"), \"examples\": [...], or at minimum a `description`.",
+              "path": "inputSchema.properties.sql"
+            },
+            {
+              "ruleId": "safety/no-annotations",
+              "dimension": "safety",
+              "severity": "info",
+              "tool": "query",
+              "penalty": 5,
+              "message": "No `annotations` block; clients cannot classify risk.",
+              "fix": "Add at least `{ \"readOnlyHint\": true }` or `{ \"destructiveHint\": true }`.",
+              "path": "annotations"
+            },
+            {
+              "ruleId": "desc/no-return",
+              "dimension": "describing",
+              "severity": "info",
+              "tool": "query",
+              "penalty": 4,
+              "message": "Description never states what the tool returns.",
+              "fix": "Append a returns clause, e.g. \"Returns the file contents as a UTF-8 string.\"",
+              "path": "description"
+            }
+          ]
+        },
+        {
+          "tool": "exec",
+          "total": 57,
+          "byDimension": {
+            "describing": 71,
+            "schema": 91,
+            "ambiguity": 100,
+            "safety": 95,
+            "ergonomics": 100
+          },
+          "findings": [
+            {
+              "ruleId": "desc/too-short",
+              "dimension": "describing",
+              "severity": "error",
+              "tool": "exec",
+              "penalty": 25,
+              "message": "Description is only 12 chars (\"Execute SQL.\") — too short to distinguish from sibling tools.",
+              "fix": "Expand to at least one sentence: what it does + what it returns.",
+              "path": "description"
+            },
+            {
+              "ruleId": "schema/param-undescribed",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "exec",
+              "penalty": 6,
+              "message": "Param `sql` has no description.",
+              "fix": "Add \"description\": \"The sql.\"",
+              "path": "inputSchema.properties.sql"
+            },
+            {
+              "ruleId": "schema/unbounded-string",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "exec",
+              "penalty": 3,
+              "message": "String param `sql` has no `format`, `pattern`, `enum`, `examples`, or description.",
+              "fix": "Add \"format\" (e.g. \"uri\", \"date-time\", \"path\"), \"examples\": [...], or at minimum a `description`.",
+              "path": "inputSchema.properties.sql"
+            },
+            {
+              "ruleId": "safety/no-annotations",
+              "dimension": "safety",
+              "severity": "info",
+              "tool": "exec",
+              "penalty": 5,
+              "message": "No `annotations` block; clients cannot classify risk.",
+              "fix": "Add at least `{ \"readOnlyHint\": true }` or `{ \"destructiveHint\": true }`.",
+              "path": "annotations"
+            },
+            {
+              "ruleId": "desc/no-return",
+              "dimension": "describing",
+              "severity": "info",
+              "tool": "exec",
+              "penalty": 4,
+              "message": "Description never states what the tool returns.",
+              "fix": "Append a returns clause, e.g. \"Returns the file contents as a UTF-8 string.\"",
+              "path": "description"
+            }
+          ]
+        },
+        {
+          "tool": "drop_table",
+          "total": 24,
+          "byDimension": {
+            "describing": 61,
+            "schema": 91,
+            "ambiguity": 92,
+            "safety": 80,
+            "ergonomics": 100
+          },
+          "findings": [
+            {
+              "ruleId": "desc/too-short",
+              "dimension": "describing",
+              "severity": "error",
+              "tool": "drop_table",
+              "penalty": 25,
+              "message": "Description is only 14 chars (\"Drops a table.\") — too short to distinguish from sibling tools.",
+              "fix": "Expand to at least one sentence: what it does + what it returns.",
+              "path": "description"
+            },
+            {
+              "ruleId": "safety/destructive-undeclared",
+              "dimension": "safety",
+              "severity": "warning",
+              "tool": "drop_table",
+              "penalty": 15,
+              "message": "Name/description implies destruction but `destructiveHint` is not set.",
+              "fix": "Set `\"annotations\": { \"destructiveHint\": true }` so clients can gate it behind confirmation.",
+              "path": "annotations"
+            },
+            {
+              "ruleId": "desc/params-undocumented",
+              "dimension": "describing",
+              "severity": "warning",
+              "tool": "drop_table",
+              "penalty": 10,
+              "message": "None of the required params (name) appear in the description.",
+              "fix": "Either mention them, e.g. \"name is the absolute path to read.\", or give each one a `description` in the schema.",
+              "path": "description"
+            },
+            {
+              "ruleId": "ambiguity/no-verb",
+              "dimension": "ambiguity",
+              "severity": "warning",
+              "tool": "drop_table",
+              "penalty": 8,
+              "message": "`drop_table` reads as a noun; no verb describes the effect.",
+              "fix": "Rename to `get_drop_table`.",
+              "path": "name"
+            },
+            {
+              "ruleId": "schema/param-undescribed",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "drop_table",
+              "penalty": 6,
+              "message": "Param `name` has no description.",
+              "fix": "Add \"description\": \"The name.\"",
+              "path": "inputSchema.properties.name"
+            },
+            {
+              "ruleId": "schema/unbounded-string",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "drop_table",
+              "penalty": 3,
+              "message": "String param `name` has no `format`, `pattern`, `enum`, `examples`, or description.",
+              "fix": "Add \"format\" (e.g. \"uri\", \"date-time\", \"path\"), \"examples\": [...], or at minimum a `description`.",
+              "path": "inputSchema.properties.name"
+            },
+            {
+              "ruleId": "safety/no-annotations",
+              "dimension": "safety",
+              "severity": "info",
+              "tool": "drop_table",
+              "penalty": 5,
+              "message": "No `annotations` block; clients cannot classify risk.",
+              "fix": "Add at least `{ \"readOnlyHint\": true }` or `{ \"destructiveHint\": true }`.",
+              "path": "annotations"
+            },
+            {
+              "ruleId": "desc/no-return",
+              "dimension": "describing",
+              "severity": "info",
+              "tool": "drop_table",
+              "penalty": 4,
+              "message": "Description never states what the tool returns.",
+              "fix": "Append a returns clause, e.g. \"Returns the file contents as a UTF-8 string.\"",
+              "path": "description"
+            }
+          ]
+        },
+        {
+          "tool": "list_tables",
+          "total": 49,
+          "byDimension": {
+            "describing": 71,
+            "schema": 83,
+            "ambiguity": 100,
+            "safety": 95,
+            "ergonomics": 100
+          },
+          "findings": [
+            {
+              "ruleId": "desc/too-short",
+              "dimension": "describing",
+              "severity": "error",
+              "tool": "list_tables",
+              "penalty": 25,
+              "message": "Description is only 13 chars (\"Lists tables.\") — too short to distinguish from sibling tools.",
+              "fix": "Expand to at least one sentence: what it does + what it returns.",
+              "path": "description"
+            },
+            {
+              "ruleId": "schema/all-optional",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "list_tables",
+              "penalty": 8,
+              "message": "All 1 params are optional; nothing anchors a minimal call.",
+              "fix": "Mark the semantically necessary one(s) as required.",
+              "path": "inputSchema.required"
+            },
+            {
+              "ruleId": "schema/param-undescribed",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "list_tables",
+              "penalty": 6,
+              "message": "Param `schema` has no description.",
+              "fix": "Add \"description\": \"The schema.\"",
+              "path": "inputSchema.properties.schema"
+            },
+            {
+              "ruleId": "schema/unbounded-string",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "list_tables",
+              "penalty": 3,
+              "message": "String param `schema` has no `format`, `pattern`, `enum`, `examples`, or description.",
+              "fix": "Add \"format\" (e.g. \"uri\", \"date-time\", \"path\"), \"examples\": [...], or at minimum a `description`.",
+              "path": "inputSchema.properties.schema"
+            },
+            {
+              "ruleId": "safety/no-annotations",
+              "dimension": "safety",
+              "severity": "info",
+              "tool": "list_tables",
+              "penalty": 5,
+              "message": "No `annotations` block; clients cannot classify risk.",
+              "fix": "Add at least `{ \"readOnlyHint\": true }` or `{ \"destructiveHint\": true }`.",
+              "path": "annotations"
+            },
+            {
+              "ruleId": "desc/no-return",
+              "dimension": "describing",
+              "severity": "info",
+              "tool": "list_tables",
+              "penalty": 4,
+              "message": "Description never states what the tool returns.",
+              "fix": "Append a returns clause, e.g. \"Returns the file contents as a UTF-8 string.\"",
+              "path": "description"
+            }
+          ]
+        },
+        {
+          "tool": "list_views",
+          "total": 49,
+          "byDimension": {
+            "describing": 71,
+            "schema": 83,
+            "ambiguity": 100,
+            "safety": 95,
+            "ergonomics": 100
+          },
+          "findings": [
+            {
+              "ruleId": "desc/too-short",
+              "dimension": "describing",
+              "severity": "error",
+              "tool": "list_views",
+              "penalty": 25,
+              "message": "Description is only 12 chars (\"Lists views.\") — too short to distinguish from sibling tools.",
+              "fix": "Expand to at least one sentence: what it does + what it returns.",
+              "path": "description"
+            },
+            {
+              "ruleId": "schema/all-optional",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "list_views",
+              "penalty": 8,
+              "message": "All 1 params are optional; nothing anchors a minimal call.",
+              "fix": "Mark the semantically necessary one(s) as required.",
+              "path": "inputSchema.required"
+            },
+            {
+              "ruleId": "schema/param-undescribed",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "list_views",
+              "penalty": 6,
+              "message": "Param `schema` has no description.",
+              "fix": "Add \"description\": \"The schema.\"",
+              "path": "inputSchema.properties.schema"
+            },
+            {
+              "ruleId": "schema/unbounded-string",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "list_views",
+              "penalty": 3,
+              "message": "String param `schema` has no `format`, `pattern`, `enum`, `examples`, or description.",
+              "fix": "Add \"format\" (e.g. \"uri\", \"date-time\", \"path\"), \"examples\": [...], or at minimum a `description`.",
+              "path": "inputSchema.properties.schema"
+            },
+            {
+              "ruleId": "safety/no-annotations",
+              "dimension": "safety",
+              "severity": "info",
+              "tool": "list_views",
+              "penalty": 5,
+              "message": "No `annotations` block; clients cannot classify risk.",
+              "fix": "Add at least `{ \"readOnlyHint\": true }` or `{ \"destructiveHint\": true }`.",
+              "path": "annotations"
+            },
+            {
+              "ruleId": "desc/no-return",
+              "dimension": "describing",
+              "severity": "info",
+              "tool": "list_views",
+              "penalty": 4,
+              "message": "Description never states what the tool returns.",
+              "fix": "Append a returns clause, e.g. \"Returns the file contents as a UTF-8 string.\"",
+              "path": "description"
+            }
+          ]
+        },
+        {
+          "tool": "get_table",
+          "total": 47,
+          "byDimension": {
+            "describing": 61,
+            "schema": 91,
+            "ambiguity": 100,
+            "safety": 95,
+            "ergonomics": 100
+          },
+          "findings": [
+            {
+              "ruleId": "desc/too-short",
+              "dimension": "describing",
+              "severity": "error",
+              "tool": "get_table",
+              "penalty": 25,
+              "message": "Description is only 10 chars (\"Get table.\") — too short to distinguish from sibling tools.",
+              "fix": "Expand to at least one sentence: what it does + what it returns.",
+              "path": "description"
+            },
+            {
+              "ruleId": "desc/params-undocumented",
+              "dimension": "describing",
+              "severity": "warning",
+              "tool": "get_table",
+              "penalty": 10,
+              "message": "None of the required params (name) appear in the description.",
+              "fix": "Either mention them, e.g. \"name is the absolute path to read.\", or give each one a `description` in the schema.",
+              "path": "description"
+            },
+            {
+              "ruleId": "schema/param-undescribed",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "get_table",
+              "penalty": 6,
+              "message": "Param `name` has no description.",
+              "fix": "Add \"description\": \"The name.\"",
+              "path": "inputSchema.properties.name"
+            },
+            {
+              "ruleId": "schema/unbounded-string",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "get_table",
+              "penalty": 3,
+              "message": "String param `name` has no `format`, `pattern`, `enum`, `examples`, or description.",
+              "fix": "Add \"format\" (e.g. \"uri\", \"date-time\", \"path\"), \"examples\": [...], or at minimum a `description`.",
+              "path": "inputSchema.properties.name"
+            },
+            {
+              "ruleId": "safety/no-annotations",
+              "dimension": "safety",
+              "severity": "info",
+              "tool": "get_table",
+              "penalty": 5,
+              "message": "No `annotations` block; clients cannot classify risk.",
+              "fix": "Add at least `{ \"readOnlyHint\": true }` or `{ \"destructiveHint\": true }`.",
+              "path": "annotations"
+            },
+            {
+              "ruleId": "desc/no-return",
+              "dimension": "describing",
+              "severity": "info",
+              "tool": "get_table",
+              "penalty": 4,
+              "message": "Description never states what the tool returns.",
+              "fix": "Append a returns clause, e.g. \"Returns the file contents as a UTF-8 string.\"",
+              "path": "description"
+            }
+          ]
+        }
+      ],
+      "averageScore": 45.5
+    },
+    {
+      "server": "filesystem-raw",
+      "source": "fixture:baseline",
+      "tools": [
+        {
+          "tool": "read_file",
+          "total": 19,
+          "byDimension": {
+            "describing": 53,
+            "schema": 91,
+            "ambiguity": 80,
+            "safety": 95,
+            "ergonomics": 100
+          },
+          "findings": [
+            {
+              "ruleId": "desc/too-short",
+              "dimension": "describing",
+              "severity": "error",
+              "tool": "read_file",
+              "penalty": 25,
+              "message": "Description is only 12 chars (\"Read a file.\") — too short to distinguish from sibling tools.",
+              "fix": "Expand to at least one sentence: what it does + what it returns.",
+              "path": "description"
+            },
+            {
+              "ruleId": "ambiguity/name-collision",
+              "dimension": "ambiguity",
+              "severity": "error",
+              "tool": "read_file",
+              "penalty": 20,
+              "message": "`read_file` and `read_file_v2` are 75% confusable — same verb, overlapping object.",
+              "fix": "Rename one to reflect the distinguishing dimension (scope, target, format), or merge them behind a `mode` enum.",
+              "path": "name"
+            },
+            {
+              "ruleId": "desc/params-undocumented",
+              "dimension": "describing",
+              "severity": "warning",
+              "tool": "read_file",
+              "penalty": 10,
+              "message": "None of the required params (path) appear in the description.",
+              "fix": "Either mention them, e.g. \"path is the absolute path to read.\", or give each one a `description` in the schema.",
+              "path": "description"
+            },
+            {
+              "ruleId": "desc/no-usage-cue",
+              "dimension": "describing",
+              "severity": "warning",
+              "tool": "read_file",
+              "penalty": 8,
+              "message": "Description never says when to use it instead of `read_file_v2`.",
+              "fix": "Add a disambiguating clause, e.g. \"Use this for text; use read_file_v2 for binary files.\"",
+              "path": "description"
+            },
+            {
+              "ruleId": "schema/param-undescribed",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "read_file",
+              "penalty": 6,
+              "message": "Param `path` has no description.",
+              "fix": "Add \"description\": \"The path.\"",
+              "path": "inputSchema.properties.path"
+            },
+            {
+              "ruleId": "schema/unbounded-string",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "read_file",
+              "penalty": 3,
+              "message": "String param `path` has no `format`, `pattern`, `enum`, `examples`, or description.",
+              "fix": "Add \"format\" (e.g. \"uri\", \"date-time\", \"path\"), \"examples\": [...], or at minimum a `description`.",
+              "path": "inputSchema.properties.path"
+            },
+            {
+              "ruleId": "safety/no-annotations",
+              "dimension": "safety",
+              "severity": "info",
+              "tool": "read_file",
+              "penalty": 5,
+              "message": "No `annotations` block; clients cannot classify risk.",
+              "fix": "Add at least `{ \"readOnlyHint\": true }` or `{ \"destructiveHint\": true }`.",
+              "path": "annotations"
+            },
+            {
+              "ruleId": "desc/no-return",
+              "dimension": "describing",
+              "severity": "info",
+              "tool": "read_file",
+              "penalty": 4,
+              "message": "Description never states what the tool returns.",
+              "fix": "Append a returns clause, e.g. \"Returns the file contents as a UTF-8 string.\"",
+              "path": "description"
+            }
+          ]
+        },
+        {
+          "tool": "read_file_v2",
+          "total": 39,
+          "byDimension": {
+            "describing": 53,
+            "schema": 91,
+            "ambiguity": 100,
+            "safety": 95,
+            "ergonomics": 100
+          },
+          "findings": [
+            {
+              "ruleId": "desc/too-short",
+              "dimension": "describing",
+              "severity": "error",
+              "tool": "read_file_v2",
+              "penalty": 25,
+              "message": "Description is only 12 chars (\"Read a file.\") — too short to distinguish from sibling tools.",
+              "fix": "Expand to at least one sentence: what it does + what it returns.",
+              "path": "description"
+            },
+            {
+              "ruleId": "desc/params-undocumented",
+              "dimension": "describing",
+              "severity": "warning",
+              "tool": "read_file_v2",
+              "penalty": 10,
+              "message": "None of the required params (path) appear in the description.",
+              "fix": "Either mention them, e.g. \"path is the absolute path to read.\", or give each one a `description` in the schema.",
+              "path": "description"
+            },
+            {
+              "ruleId": "desc/no-usage-cue",
+              "dimension": "describing",
+              "severity": "warning",
+              "tool": "read_file_v2",
+              "penalty": 8,
+              "message": "Description never says when to use it instead of `read_file`.",
+              "fix": "Add a disambiguating clause, e.g. \"Use this for text; use read_file for binary files.\"",
+              "path": "description"
+            },
+            {
+              "ruleId": "schema/param-undescribed",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "read_file_v2",
+              "penalty": 6,
+              "message": "Param `path` has no description.",
+              "fix": "Add \"description\": \"The path.\"",
+              "path": "inputSchema.properties.path"
+            },
+            {
+              "ruleId": "schema/unbounded-string",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "read_file_v2",
+              "penalty": 3,
+              "message": "String param `path` has no `format`, `pattern`, `enum`, `examples`, or description.",
+              "fix": "Add \"format\" (e.g. \"uri\", \"date-time\", \"path\"), \"examples\": [...], or at minimum a `description`.",
+              "path": "inputSchema.properties.path"
+            },
+            {
+              "ruleId": "safety/no-annotations",
+              "dimension": "safety",
+              "severity": "info",
+              "tool": "read_file_v2",
+              "penalty": 5,
+              "message": "No `annotations` block; clients cannot classify risk.",
+              "fix": "Add at least `{ \"readOnlyHint\": true }` or `{ \"destructiveHint\": true }`.",
+              "path": "annotations"
+            },
+            {
+              "ruleId": "desc/no-return",
+              "dimension": "describing",
+              "severity": "info",
+              "tool": "read_file_v2",
+              "penalty": 4,
+              "message": "Description never states what the tool returns.",
+              "fix": "Append a returns clause, e.g. \"Returns the file contents as a UTF-8 string.\"",
+              "path": "description"
+            }
+          ]
+        },
+        {
+          "tool": "write",
+          "total": 28,
+          "byDimension": {
+            "describing": 71,
+            "schema": 62,
+            "ambiguity": 100,
+            "safety": 95,
+            "ergonomics": 100
+          },
+          "findings": [
+            {
+              "ruleId": "desc/too-short",
+              "dimension": "describing",
+              "severity": "error",
+              "tool": "write",
+              "penalty": 25,
+              "message": "Description is only 6 chars (\"Write.\") — too short to distinguish from sibling tools.",
+              "fix": "Expand to at least one sentence: what it does + what it returns.",
+              "path": "description"
+            },
+            {
+              "ruleId": "schema/all-optional",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "write",
+              "penalty": 8,
+              "message": "All 4 params are optional; nothing anchors a minimal call.",
+              "fix": "Mark the semantically necessary one(s) as required.",
+              "path": "inputSchema.required"
+            },
+            {
+              "ruleId": "schema/param-undescribed",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "write",
+              "penalty": 6,
+              "message": "Param `path` has no description.",
+              "fix": "Add \"description\": \"The path.\"",
+              "path": "inputSchema.properties.path"
+            },
+            {
+              "ruleId": "schema/param-undescribed",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "write",
+              "penalty": 6,
+              "message": "Param `content` has no description.",
+              "fix": "Add \"description\": \"The content.\"",
+              "path": "inputSchema.properties.content"
+            },
+            {
+              "ruleId": "schema/param-undescribed",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "write",
+              "penalty": 6,
+              "message": "Param `append` has no description.",
+              "fix": "Add \"description\": \"Whether to append.\"",
+              "path": "inputSchema.properties.append"
+            },
+            {
+              "ruleId": "schema/param-undescribed",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "write",
+              "penalty": 6,
+              "message": "Param `create_dirs` has no description.",
+              "fix": "Add \"description\": \"Whether to create dirs.\"",
+              "path": "inputSchema.properties.create_dirs"
+            },
+            {
+              "ruleId": "schema/unbounded-string",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "write",
+              "penalty": 3,
+              "message": "String param `path` has no `format`, `pattern`, `enum`, `examples`, or description.",
+              "fix": "Add \"format\" (e.g. \"uri\", \"date-time\", \"path\"), \"examples\": [...], or at minimum a `description`.",
+              "path": "inputSchema.properties.path"
+            },
+            {
+              "ruleId": "schema/unbounded-string",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "write",
+              "penalty": 3,
+              "message": "String param `content` has no `format`, `pattern`, `enum`, `examples`, or description.",
+              "fix": "Add \"format\" (e.g. \"uri\", \"date-time\", \"path\"), \"examples\": [...], or at minimum a `description`.",
+              "path": "inputSchema.properties.content"
+            },
+            {
+              "ruleId": "safety/no-annotations",
+              "dimension": "safety",
+              "severity": "info",
+              "tool": "write",
+              "penalty": 5,
+              "message": "No `annotations` block; clients cannot classify risk.",
+              "fix": "Add at least `{ \"readOnlyHint\": true }` or `{ \"destructiveHint\": true }`.",
+              "path": "annotations"
+            },
+            {
+              "ruleId": "desc/no-return",
+              "dimension": "describing",
+              "severity": "info",
+              "tool": "write",
+              "penalty": 4,
+              "message": "Description never states what the tool returns.",
+              "fix": "Append a returns clause, e.g. \"Returns the file contents as a UTF-8 string.\"",
+              "path": "description"
+            }
+          ]
+        },
+        {
+          "tool": "delete",
+          "total": 51,
+          "byDimension": {
+            "describing": 86,
+            "schema": 85,
+            "ambiguity": 100,
+            "safety": 80,
+            "ergonomics": 100
+          },
+          "findings": [
+            {
+              "ruleId": "safety/destructive-undeclared",
+              "dimension": "safety",
+              "severity": "warning",
+              "tool": "delete",
+              "penalty": 15,
+              "message": "Name/description implies destruction but `destructiveHint` is not set.",
+              "fix": "Set `\"annotations\": { \"destructiveHint\": true }` so clients can gate it behind confirmation.",
+              "path": "annotations"
+            },
+            {
+              "ruleId": "desc/params-undocumented",
+              "dimension": "describing",
+              "severity": "warning",
+              "tool": "delete",
+              "penalty": 10,
+              "message": "None of the required params (path) appear in the description.",
+              "fix": "Either mention them, e.g. \"path is the absolute path to read.\", or give each one a `description` in the schema.",
+              "path": "description"
+            },
+            {
+              "ruleId": "schema/param-undescribed",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "delete",
+              "penalty": 6,
+              "message": "Param `path` has no description.",
+              "fix": "Add \"description\": \"The path.\"",
+              "path": "inputSchema.properties.path"
+            },
+            {
+              "ruleId": "schema/param-undescribed",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "delete",
+              "penalty": 6,
+              "message": "Param `recursive` has no description.",
+              "fix": "Add \"description\": \"Whether to recursive.\"",
+              "path": "inputSchema.properties.recursive"
+            },
+            {
+              "ruleId": "schema/unbounded-string",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "delete",
+              "penalty": 3,
+              "message": "String param `path` has no `format`, `pattern`, `enum`, `examples`, or description.",
+              "fix": "Add \"format\" (e.g. \"uri\", \"date-time\", \"path\"), \"examples\": [...], or at minimum a `description`.",
+              "path": "inputSchema.properties.path"
+            },
+            {
+              "ruleId": "safety/no-annotations",
+              "dimension": "safety",
+              "severity": "info",
+              "tool": "delete",
+              "penalty": 5,
+              "message": "No `annotations` block; clients cannot classify risk.",
+              "fix": "Add at least `{ \"readOnlyHint\": true }` or `{ \"destructiveHint\": true }`.",
+              "path": "annotations"
+            },
+            {
+              "ruleId": "desc/no-return",
+              "dimension": "describing",
+              "severity": "info",
+              "tool": "delete",
+              "penalty": 4,
+              "message": "Description never states what the tool returns.",
+              "fix": "Append a returns clause, e.g. \"Returns the file contents as a UTF-8 string.\"",
+              "path": "description"
+            }
+          ]
+        },
+        {
+          "tool": "ls",
+          "total": 58,
+          "byDimension": {
+            "describing": 71,
+            "schema": 100,
+            "ambiguity": 92,
+            "safety": 95,
+            "ergonomics": 100
+          },
+          "findings": [
+            {
+              "ruleId": "desc/too-short",
+              "dimension": "describing",
+              "severity": "error",
+              "tool": "ls",
+              "penalty": 25,
+              "message": "Description is only 5 chars (\"List.\") — too short to distinguish from sibling tools.",
+              "fix": "Expand to at least one sentence: what it does + what it returns.",
+              "path": "description"
+            },
+            {
+              "ruleId": "ambiguity/no-verb",
+              "dimension": "ambiguity",
+              "severity": "warning",
+              "tool": "ls",
+              "penalty": 8,
+              "message": "`ls` reads as a noun; no verb describes the effect.",
+              "fix": "Rename to `list_ls`.",
+              "path": "name"
+            },
+            {
+              "ruleId": "safety/no-annotations",
+              "dimension": "safety",
+              "severity": "info",
+              "tool": "ls",
+              "penalty": 5,
+              "message": "No `annotations` block; clients cannot classify risk.",
+              "fix": "Add at least `{ \"readOnlyHint\": true }` or `{ \"destructiveHint\": true }`.",
+              "path": "annotations"
+            },
+            {
+              "ruleId": "desc/no-return",
+              "dimension": "describing",
+              "severity": "info",
+              "tool": "ls",
+              "penalty": 4,
+              "message": "Description never states what the tool returns.",
+              "fix": "Append a returns clause, e.g. \"Returns the file contents as a UTF-8 string.\"",
+              "path": "description"
+            }
+          ]
+        },
+        {
+          "tool": "handle",
+          "total": 30,
+          "byDimension": {
+            "describing": 96,
+            "schema": 57,
+            "ambiguity": 90,
+            "safety": 95,
+            "ergonomics": 92
+          },
+          "findings": [
+            {
+              "ruleId": "schema/untyped-param",
+              "dimension": "schema",
+              "severity": "error",
+              "tool": "handle",
+              "penalty": 12,
+              "message": "Param `data` declares no `type`.",
+              "fix": "Add \"type\": \"string\"",
+              "path": "inputSchema.properties.data"
+            },
+            {
+              "ruleId": "ambiguity/vague-verb",
+              "dimension": "ambiguity",
+              "severity": "warning",
+              "tool": "handle",
+              "penalty": 10,
+              "message": "Name starts with vague verb `handle`.",
+              "fix": "Use a specific verb: read/write/create/delete/search/list/convert/...",
+              "path": "name"
+            },
+            {
+              "ruleId": "ergonomics/mode-without-enum",
+              "dimension": "ergonomics",
+              "severity": "warning",
+              "tool": "handle",
+              "penalty": 8,
+              "message": "Mode-like param `mode` has no `enum`.",
+              "fix": "Add \"enum\": [...] listing every legal value.",
+              "path": "inputSchema.properties.mode"
+            },
+            {
+              "ruleId": "schema/all-optional",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "handle",
+              "penalty": 8,
+              "message": "All 2 params are optional; nothing anchors a minimal call.",
+              "fix": "Mark the semantically necessary one(s) as required.",
+              "path": "inputSchema.required"
+            },
+            {
+              "ruleId": "schema/weak-param-name",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "handle",
+              "penalty": 8,
+              "message": "Param name `data` is not self-describing.",
+              "fix": "Rename to what it holds, e.g. `file_path`, `query`, `max_results`.",
+              "path": "inputSchema.properties.data"
+            },
+            {
+              "ruleId": "schema/param-undescribed",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "handle",
+              "penalty": 6,
+              "message": "Param `data` has no description.",
+              "fix": "Add \"description\": \"The data.\"",
+              "path": "inputSchema.properties.data"
+            },
+            {
+              "ruleId": "schema/param-undescribed",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "handle",
+              "penalty": 6,
+              "message": "Param `mode` has no description.",
+              "fix": "Add \"description\": \"The mode.\"",
+              "path": "inputSchema.properties.mode"
+            },
+            {
+              "ruleId": "schema/unbounded-string",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "handle",
+              "penalty": 3,
+              "message": "String param `mode` has no `format`, `pattern`, `enum`, `examples`, or description.",
+              "fix": "Add \"format\" (e.g. \"uri\", \"date-time\", \"path\"), \"examples\": [...], or at minimum a `description`.",
+              "path": "inputSchema.properties.mode"
+            },
+            {
+              "ruleId": "safety/no-annotations",
+              "dimension": "safety",
+              "severity": "info",
+              "tool": "handle",
+              "penalty": 5,
+              "message": "No `annotations` block; clients cannot classify risk.",
+              "fix": "Add at least `{ \"readOnlyHint\": true }` or `{ \"destructiveHint\": true }`.",
+              "path": "annotations"
+            },
+            {
+              "ruleId": "desc/no-return",
+              "dimension": "describing",
+              "severity": "info",
+              "tool": "handle",
+              "penalty": 4,
+              "message": "Description never states what the tool returns.",
+              "fix": "Append a returns clause, e.g. \"Returns the file contents as a UTF-8 string.\"",
+              "path": "description"
+            }
+          ]
+        },
+        {
+          "tool": "file_info",
+          "total": 64,
+          "byDimension": {
+            "describing": 86,
+            "schema": 91,
+            "ambiguity": 92,
+            "safety": 95,
+            "ergonomics": 100
+          },
+          "findings": [
+            {
+              "ruleId": "desc/params-undocumented",
+              "dimension": "describing",
+              "severity": "warning",
+              "tool": "file_info",
+              "penalty": 10,
+              "message": "None of the required params (path) appear in the description.",
+              "fix": "Either mention them, e.g. \"path is the absolute path to read.\", or give each one a `description` in the schema.",
+              "path": "description"
+            },
+            {
+              "ruleId": "ambiguity/no-verb",
+              "dimension": "ambiguity",
+              "severity": "warning",
+              "tool": "file_info",
+              "penalty": 8,
+              "message": "`file_info` reads as a noun; no verb describes the effect.",
+              "fix": "Rename to `get_file_info`.",
+              "path": "name"
+            },
+            {
+              "ruleId": "schema/param-undescribed",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "file_info",
+              "penalty": 6,
+              "message": "Param `path` has no description.",
+              "fix": "Add \"description\": \"The path.\"",
+              "path": "inputSchema.properties.path"
+            },
+            {
+              "ruleId": "desc/generic",
+              "dimension": "describing",
+              "severity": "warning",
+              "tool": "file_info",
+              "penalty": 4,
+              "message": "Generic filler: \"this tool\".",
+              "fix": "Replace filler with the concrete object and effect, e.g. \"Reads a UTF-8 file from disk and returns its contents\".",
+              "path": "description"
+            },
+            {
+              "ruleId": "schema/unbounded-string",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "file_info",
+              "penalty": 3,
+              "message": "String param `path` has no `format`, `pattern`, `enum`, `examples`, or description.",
+              "fix": "Add \"format\" (e.g. \"uri\", \"date-time\", \"path\"), \"examples\": [...], or at minimum a `description`.",
+              "path": "inputSchema.properties.path"
+            },
+            {
+              "ruleId": "safety/no-annotations",
+              "dimension": "safety",
+              "severity": "info",
+              "tool": "file_info",
+              "penalty": 5,
+              "message": "No `annotations` block; clients cannot classify risk.",
+              "fix": "Add at least `{ \"readOnlyHint\": true }` or `{ \"destructiveHint\": true }`.",
+              "path": "annotations"
+            }
+          ]
+        }
+      ],
+      "averageScore": 41.3
+    },
+    {
+      "server": "web-fetch",
+      "source": "fixture:baseline",
+      "tools": [
+        {
+          "tool": "get",
+          "total": 35,
+          "byDimension": {
+            "describing": 57,
+            "schema": 83,
+            "ambiguity": 100,
+            "safety": 95,
+            "ergonomics": 100
+          },
+          "findings": [
+            {
+              "ruleId": "desc/too-short",
+              "dimension": "describing",
+              "severity": "error",
+              "tool": "get",
+              "penalty": 25,
+              "message": "Description is only 11 chars (\"Gets stuff.\") — too short to distinguish from sibling tools.",
+              "fix": "Expand to at least one sentence: what it does + what it returns.",
+              "path": "description"
+            },
+            {
+              "ruleId": "desc/params-undocumented",
+              "dimension": "describing",
+              "severity": "warning",
+              "tool": "get",
+              "penalty": 10,
+              "message": "None of the required params (u) appear in the description.",
+              "fix": "Either mention them, e.g. \"u is the absolute path to read.\", or give each one a `description` in the schema.",
+              "path": "description"
+            },
+            {
+              "ruleId": "schema/weak-param-name",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "get",
+              "penalty": 8,
+              "message": "Param name `u` is not self-describing.",
+              "fix": "Rename to what it holds, e.g. `file_path`, `query`, `max_results`.",
+              "path": "inputSchema.properties.u"
+            },
+            {
+              "ruleId": "schema/param-undescribed",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "get",
+              "penalty": 6,
+              "message": "Param `u` has no description.",
+              "fix": "Add \"description\": \"The u.\"",
+              "path": "inputSchema.properties.u"
+            },
+            {
+              "ruleId": "desc/generic",
+              "dimension": "describing",
+              "severity": "warning",
+              "tool": "get",
+              "penalty": 4,
+              "message": "Generic filler: \"stuff\".",
+              "fix": "Replace filler with the concrete object and effect, e.g. \"Reads a UTF-8 file from disk and returns its contents\".",
+              "path": "description"
+            },
+            {
+              "ruleId": "schema/unbounded-string",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "get",
+              "penalty": 3,
+              "message": "String param `u` has no `format`, `pattern`, `enum`, `examples`, or description.",
+              "fix": "Add \"format\" (e.g. \"uri\", \"date-time\", \"path\"), \"examples\": [...], or at minimum a `description`.",
+              "path": "inputSchema.properties.u"
+            },
+            {
+              "ruleId": "safety/no-annotations",
+              "dimension": "safety",
+              "severity": "info",
+              "tool": "get",
+              "penalty": 5,
+              "message": "No `annotations` block; clients cannot classify risk.",
+              "fix": "Add at least `{ \"readOnlyHint\": true }` or `{ \"destructiveHint\": true }`.",
+              "path": "annotations"
+            },
+            {
+              "ruleId": "desc/no-return",
+              "dimension": "describing",
+              "severity": "info",
+              "tool": "get",
+              "penalty": 4,
+              "message": "Description never states what the tool returns.",
+              "fix": "Append a returns clause, e.g. \"Returns the file contents as a UTF-8 string.\"",
+              "path": "description"
+            }
+          ]
+        },
+        {
+          "tool": "get_url",
+          "total": 43,
+          "byDimension": {
+            "describing": 71,
+            "schema": 83,
+            "ambiguity": 100,
+            "safety": 89,
+            "ergonomics": 100
+          },
+          "findings": [
+            {
+              "ruleId": "desc/too-short",
+              "dimension": "describing",
+              "severity": "error",
+              "tool": "get_url",
+              "penalty": 25,
+              "message": "Description is only 10 chars (\"Get a URL.\") — too short to distinguish from sibling tools.",
+              "fix": "Expand to at least one sentence: what it does + what it returns.",
+              "path": "description"
+            },
+            {
+              "ruleId": "schema/all-optional",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "get_url",
+              "penalty": 8,
+              "message": "All 1 params are optional; nothing anchors a minimal call.",
+              "fix": "Mark the semantically necessary one(s) as required.",
+              "path": "inputSchema.required"
+            },
+            {
+              "ruleId": "schema/param-undescribed",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "get_url",
+              "penalty": 6,
+              "message": "Param `url` has no description.",
+              "fix": "Add \"description\": \"The url.\"",
+              "path": "inputSchema.properties.url"
+            },
+            {
+              "ruleId": "schema/unbounded-string",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "get_url",
+              "penalty": 3,
+              "message": "String param `url` has no `format`, `pattern`, `enum`, `examples`, or description.",
+              "fix": "Add \"format\" (e.g. \"uri\", \"date-time\", \"path\"), \"examples\": [...], or at minimum a `description`.",
+              "path": "inputSchema.properties.url"
+            },
+            {
+              "ruleId": "safety/open-world-undeclared",
+              "dimension": "safety",
+              "severity": "info",
+              "tool": "get_url",
+              "penalty": 6,
+              "message": "Tool appears to reach the network but `openWorldHint` is not set.",
+              "fix": "Set `\"openWorldHint\": true`.",
+              "path": "annotations"
+            },
+            {
+              "ruleId": "safety/no-annotations",
+              "dimension": "safety",
+              "severity": "info",
+              "tool": "get_url",
+              "penalty": 5,
+              "message": "No `annotations` block; clients cannot classify risk.",
+              "fix": "Add at least `{ \"readOnlyHint\": true }` or `{ \"destructiveHint\": true }`.",
+              "path": "annotations"
+            },
+            {
+              "ruleId": "desc/no-return",
+              "dimension": "describing",
+              "severity": "info",
+              "tool": "get_url",
+              "penalty": 4,
+              "message": "Description never states what the tool returns.",
+              "fix": "Append a returns clause, e.g. \"Returns the file contents as a UTF-8 string.\"",
+              "path": "description"
+            }
+          ]
+        },
+        {
+          "tool": "process",
+          "total": 0,
+          "byDimension": {
+            "describing": 71,
+            "schema": 45,
+            "ambiguity": 90,
+            "safety": 95,
+            "ergonomics": 74
+          },
+          "findings": [
+            {
+              "ruleId": "desc/too-short",
+              "dimension": "describing",
+              "severity": "error",
+              "tool": "process",
+              "penalty": 25,
+              "message": "Description is only 23 chars (\"Processes the response.\") — too short to distinguish from sibling tools.",
+              "fix": "Expand to at least one sentence: what it does + what it returns.",
+              "path": "description"
+            },
+            {
+              "ruleId": "schema/untyped-param",
+              "dimension": "schema",
+              "severity": "error",
+              "tool": "process",
+              "penalty": 12,
+              "message": "Param `data` declares no `type`.",
+              "fix": "Add \"type\": \"string\"",
+              "path": "inputSchema.properties.data"
+            },
+            {
+              "ruleId": "ambiguity/vague-verb",
+              "dimension": "ambiguity",
+              "severity": "warning",
+              "tool": "process",
+              "penalty": 10,
+              "message": "Name starts with vague verb `process`.",
+              "fix": "Use a specific verb: read/write/create/delete/search/list/convert/...",
+              "path": "name"
+            },
+            {
+              "ruleId": "ergonomics/god-tool",
+              "dimension": "ergonomics",
+              "severity": "warning",
+              "tool": "process",
+              "penalty": 10,
+              "message": "`process` takes 11 params.",
+              "fix": "Split into focused tools, or nest the optional ones under one object param.",
+              "path": "inputSchema.properties"
+            },
+            {
+              "ruleId": "schema/bare-object",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "process",
+              "penalty": 10,
+              "message": "Param `headers` is an unconstrained object.",
+              "fix": "Declare `\"properties\"`, or set `\"additionalProperties\": false` if the shape is fixed.",
+              "path": "inputSchema.properties.headers"
+            },
+            {
+              "ruleId": "schema/bare-object",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "process",
+              "penalty": 10,
+              "message": "Param `cookies` is an unconstrained object.",
+              "fix": "Declare `\"properties\"`, or set `\"additionalProperties\": false` if the shape is fixed.",
+              "path": "inputSchema.properties.cookies"
+            },
+            {
+              "ruleId": "ergonomics/boolean-trap",
+              "dimension": "ergonomics",
+              "severity": "warning",
+              "tool": "process",
+              "penalty": 8,
+              "message": "2 mode-like boolean flags (raw, pretty) — 4 combinations, some contradictory.",
+              "fix": "Replace mutually exclusive flags with a single `mode` enum, e.g. `\"mode\": \"recursive\" | \"shallow\"`.",
+              "path": "inputSchema.properties"
+            },
+            {
+              "ruleId": "ergonomics/mode-without-enum",
+              "dimension": "ergonomics",
+              "severity": "warning",
+              "tool": "process",
+              "penalty": 8,
+              "message": "Mode-like param `mode` has no `enum`.",
+              "fix": "Add \"enum\": [...] listing every legal value.",
+              "path": "inputSchema.properties.mode"
+            },
+            {
+              "ruleId": "schema/all-optional",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "process",
+              "penalty": 8,
+              "message": "All 11 params are optional; nothing anchors a minimal call.",
+              "fix": "Mark the semantically necessary one(s) as required.",
+              "path": "inputSchema.required"
+            },
+            {
+              "ruleId": "schema/weak-param-name",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "process",
+              "penalty": 8,
+              "message": "Param name `data` is not self-describing.",
+              "fix": "Rename to what it holds, e.g. `file_path`, `query`, `max_results`.",
+              "path": "inputSchema.properties.data"
+            },
+            {
+              "ruleId": "schema/param-undescribed",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "process",
+              "penalty": 6,
+              "message": "Param `data` has no description.",
+              "fix": "Add \"description\": \"The data.\"",
+              "path": "inputSchema.properties.data"
+            },
+            {
+              "ruleId": "schema/param-undescribed",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "process",
+              "penalty": 6,
+              "message": "Param `mode` has no description.",
+              "fix": "Add \"description\": \"The mode.\"",
+              "path": "inputSchema.properties.mode"
+            },
+            {
+              "ruleId": "schema/param-undescribed",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "process",
+              "penalty": 6,
+              "message": "Param `raw` has no description.",
+              "fix": "Add \"description\": \"Whether to raw.\"",
+              "path": "inputSchema.properties.raw"
+            },
+            {
+              "ruleId": "schema/param-undescribed",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "process",
+              "penalty": 6,
+              "message": "Param `pretty` has no description.",
+              "fix": "Add \"description\": \"Whether to pretty.\"",
+              "path": "inputSchema.properties.pretty"
+            },
+            {
+              "ruleId": "schema/param-undescribed",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "process",
+              "penalty": 6,
+              "message": "Param `timeout` has no description.",
+              "fix": "Add \"description\": \"The timeout as a number.\"",
+              "path": "inputSchema.properties.timeout"
+            },
+            {
+              "ruleId": "schema/unbounded-string",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "process",
+              "penalty": 3,
+              "message": "String param `mode` has no `format`, `pattern`, `enum`, `examples`, or description.",
+              "fix": "Add \"format\" (e.g. \"uri\", \"date-time\", \"path\"), \"examples\": [...], or at minimum a `description`.",
+              "path": "inputSchema.properties.mode"
+            },
+            {
+              "ruleId": "schema/unbounded-string",
+              "dimension": "schema",
+              "severity": "warning",
+              "tool": "process",
+              "penalty": 3,
+              "message": "String param `proxy` has no `format`, `pattern`, `enum`, `examples`, or description.",
+              "fix": "Add \"format\" (e.g. \"uri\", \"date-time\", \"path\"), \"examples\": [...], or at minimum a `description`.",
+              "path": "inputSchema.properties.proxy"
+            },
+            {
+              "ruleId": "safety/no-annotations",
+              "dimension": "safety",
+              "severity": "info",
+              "tool": "process",
+              "penalty": 5,
+              "message": "No `annotations` block; clients cannot classify risk.",
+              "fix": "Add at least `{ \"readOnlyHint\": true }` or `{ \"destructiveHint\": true }`.",
+              "path": "annotations"
+            },
+            {
+              "ruleId": "desc/no-return",
+              "dimension": "describing",
+              "severity": "info",
+              "tool": "process",
+              "penalty": 4,
+              "message": "Description never states what the tool returns.",
+              "fix": "Append a returns clause, e.g. \"Returns the file contents as a UTF-8 string.\"",
+              "path": "description"
+            }
+          ]
+        },
+        {
+          "tool": "reset",
+          "total": 28,
+          "byDimension": {
+            "describing": 71,
+            "schema": 100,
+            "ambiguity": 92,
+            "safety": 65,
+            "ergonomics": 100
+          },
+          "findings": [
+            {
+              "ruleId": "desc/too-short",
+              "dimension": "describing",
+              "severity": "error",
+              "tool": "reset",
+              "penalty": 25,
+              "message": "Description is only 17 chars (\"Resets the cache.\") — too short to distinguish from sibling tools.",
+              "fix": "Expand to at least one sentence: what it does + what it returns.",
+              "path": "description"
+            },
+            {
+              "ruleId": "safety/readonly-misdeclared",
+              "dimension": "safety",
+              "severity": "error",
+              "tool": "reset",
+              "penalty": 20,
+              "message": "`readOnlyHint: true` contradicts destructive wording in the name/description.",
+              "fix": "Remove `readOnlyHint`, or set it to `false` and add `destructiveHint: true`.",
+              "path": "annotations.readOnlyHint"
+            },
+            {
+              "ruleId": "safety/destructive-undeclared",
+              "dimension": "safety",
+              "severity": "warning",
+              "tool": "reset",
+              "penalty": 15,
+              "message": "Name/description implies destruction but `destructiveHint` is not set.",
+              "fix": "Set `\"annotations\": { \"destructiveHint\": true }` so clients can gate it behind confirmation.",
+              "path": "annotations"
+            },
+            {
+              "ruleId": "ambiguity/no-verb",
+              "dimension": "ambiguity",
+              "severity": "warning",
+              "tool": "reset",
+              "penalty": 8,
+              "message": "`reset` reads as a noun; no verb describes the effect.",
+              "fix": "Rename to `get_reset`.",
+              "path": "name"
+            },
+            {
+              "ruleId": "desc/no-return",
+              "dimension": "describing",
+              "severity": "info",
+              "tool": "reset",
+              "penalty": 4,
+              "message": "Description never states what the tool returns.",
+              "fix": "Append a returns clause, e.g. \"Returns the file contents as a UTF-8 string.\"",
+              "path": "description"
+            }
+          ]
+        }
+      ],
+      "averageScore": 26.5
+    }
+  ],
+  "summary": {
+    "tools": 32,
+    "findings": 140,
+    "errors": 21,
+    "warnings": 84,
+    "averageScore": 60.6,
+    "byDimension": {
+      "describing": 83.6,
+      "schema": 90.1,
+      "ambiguity": 95.3,
+      "safety": 95.1,
+      "ergonomics": 98.9
+    },
+    "byRule": [
+      {
+        "ruleId": "schema/param-undescribed",
+        "count": 24,
+        "penalty": 144
+      },
+      {
+        "ruleId": "desc/no-return",
+        "count": 17,
+        "penalty": 68
+      },
+      {
+        "ruleId": "schema/unbounded-string",
+        "count": 17,
+        "penalty": 51
+      },
+      {
+        "ruleId": "safety/no-annotations",
+        "count": 16,
+        "penalty": 80
+      },
+      {
+        "ruleId": "desc/too-short",
+        "count": 14,
+        "penalty": 350
+      },
+      {
+        "ruleId": "desc/params-undocumented",
+        "count": 8,
+        "penalty": 80
+      },
+      {
+        "ruleId": "schema/all-optional",
+        "count": 8,
+        "penalty": 64
+      },
+      {
+        "ruleId": "ambiguity/name-collision",
+        "count": 4,
+        "penalty": 80
+      },
+      {
+        "ruleId": "ambiguity/no-verb",
+        "count": 4,
+        "penalty": 32
+      },
+      {
+        "ruleId": "ambiguity/vague-verb",
+        "count": 4,
+        "penalty": 40
+      },
+      {
+        "ruleId": "schema/weak-param-name",
+        "count": 4,
+        "penalty": 32
+      },
+      {
+        "ruleId": "desc/generic",
+        "count": 3,
+        "penalty": 12
+      },
+      {
+        "ruleId": "safety/destructive-undeclared",
+        "count": 3,
+        "penalty": 45
+      },
+      {
+        "ruleId": "schema/bare-object",
+        "count": 3,
+        "penalty": 30
+      },
+      {
+        "ruleId": "desc/no-usage-cue",
+        "count": 2,
+        "penalty": 16
+      },
+      {
+        "ruleId": "ergonomics/mode-without-enum",
+        "count": 2,
+        "penalty": 16
+      },
+      {
+        "ruleId": "safety/open-world-undeclared",
+        "count": 2,
+        "penalty": 12
+      },
+      {
+        "ruleId": "schema/untyped-param",
+        "count": 2,
+        "penalty": 24
+      },
+      {
+        "ruleId": "ergonomics/boolean-trap",
+        "count": 1,
+        "penalty": 8
+      },
+      {
+        "ruleId": "ergonomics/god-tool",
+        "count": 1,
+        "penalty": 10
+      },
+      {
+        "ruleId": "safety/readonly-misdeclared",
+        "count": 1,
+        "penalty": 20
+      }
+    ]
+  }
+}
