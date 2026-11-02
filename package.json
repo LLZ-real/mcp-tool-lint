@@ -1,7 +1,7 @@
 {
-  "name": "mcp-tool-lint",
+  "name": "@llz-real/mcp-tool-lint",
   "version": "0.1.0",
-  "description": "Lint MCP tool schemas and descriptions for LLM-callability, then prove the fixes with an A/B benchmark.",
+  "description": "Lint MCP tool schemas and descriptions for LLM-callability, then measure the gap with an A/B benchmark.",
   "type": "module",
   "license": "MIT",
   "author": "李林臻 (https://github.com/LLZ-real)",
@@ -29,10 +29,13 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "node --experimental-strip-types src/cli.ts",
-    "test": "node --experimental-strip-types --test test/*.test.ts",
+    "test": "node --experimental-strip-types test/all.test.ts",
     "lint": "tsc -p tsconfig.json --noEmit",
-    "bench": "npm run build && node dist/cli.js bench fixtures/ --json > benchmark/results.json",
+    "bench": "node --experimental-strip-types benchmark/run.ts",
     "prepublishOnly": "npm run build"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "keywords": [
     "mcp",
