@@ -133,6 +133,42 @@
         "destructiveHint": false,
         "openWorldHint": false
       }
+    },
+    {
+      "name": "migrate_schema",
+      "description": "Apply one schema migration — `operation: \"create\"`, `\"drop\"`, or `\"alter\"` — and return the DDL that ran. Destructive for `drop` and for some `alter` operations, and not recoverable, so run it only after the user has confirmed the migration. Rejects DML statements — use run_write_query for those.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": ["create", "drop", "alter"],
+            "description": "Which kind of migration to apply."
+          },
+          "table": {
+            "type": "string",
+            "description": "Table the migration applies to, optionally schema-qualified as `schema.table`."
+          },
+          "ddl": {
+            "type": "string",
+            "description": "The DDL statement for the migration, e.g. `CREATE TABLE ...`, `DROP TABLE ...`, or `ALTER TABLE ...`."
+          },
+          "dry_run": {
+            "type": "boolean",
+            "default": false,
+            "description": "Print the DDL that would run and exit without applying it."
+          }
+        },
+        "required": ["operation", "table", "ddl"],
+        "additionalProperties": false
+      },
+      "annotations": {
+        "title": "Migrate schema",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
     }
   ]
 }

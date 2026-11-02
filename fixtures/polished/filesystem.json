@@ -3,8 +3,8 @@
   "source": "fixture:polished",
   "tools": [
     {
-      "name": "read_text_file",
-      "description": "Read a UTF-8 text file from disk and return its full contents as a string. Use this for source code, config, and markdown. Use read_file_bytes instead when the file may be binary or large.",
+      "name": "read_file",
+      "description": "Read a file from disk and return its contents. Use `encoding: \"utf8\"` for text — source code, config, markdown — and `encoding: \"base64\"` when the file may be binary (images, archives) or exact byte fidelity matters. Returns `{ encoding, size, content }`.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -12,6 +12,12 @@
             "type": "string",
             "format": "path",
             "description": "Absolute path of the file to read, e.g. /home/me/notes.txt."
+          },
+          "encoding": {
+            "type": "string",
+            "enum": ["utf8", "base64"],
+            "default": "utf8",
+            "description": "How to encode the returned content: `utf8` for text, `base64` for binary files."
           },
           "max_bytes": {
             "type": "integer",
@@ -25,34 +31,7 @@
         "additionalProperties": false
       },
       "annotations": {
-        "title": "Read text file",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": false
-      }
-    },
-    {
-      "name": "read_file_bytes",
-      "description": "Read a file as base64-encoded bytes without decoding it as text. Use this when the file may be binary (images, archives) or when exact byte fidelity matters. Returns an object with `encoding`, `size`, and `content`.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "path": {
-            "type": "string",
-            "format": "path",
-            "description": "Absolute path of the file to read."
-          },
-          "max_bytes": {
-            "type": "integer",
-            "minimum": 1,
-            "description": "Truncate the returned content after this many bytes."
-          }
-        },
-        "required": ["path"],
-        "additionalProperties": false
-      },
-      "annotations": {
-        "title": "Read file bytes",
+        "title": "Read file",
         "readOnlyHint": true,
         "destructiveHint": false,
         "openWorldHint": false

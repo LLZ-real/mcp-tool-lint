@@ -9,7 +9,7 @@
  * Run: node --experimental-strip-types benchmark/run.ts
  */
 
-import { readFileSync } from "node:fs";
+import { writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadFixtureFile } from "../src/loader.ts";
@@ -52,6 +52,15 @@ for (const r of results) {
   }
   if (r.raw.averageScore > 60) {
     failures.push(`${r.api}: raw server scored ${r.raw.averageScore}, expected <= 60`);
+  }
+  // "Fixtures are the spec": the polished set must be free of error-level
+  // findings. Warning/info findings are fine — they are the next improvement.
+  for (const t of r.polished.tools) {
+    for (const f of t.findings) {
+      if (f.severity === "error") {
+        failures.push(`${r.api}: polished tool ${t.tool} still has an error-level finding: ${f.ruleId}`);
+      }
+    }
   }
 }
 
@@ -121,8 +130,7 @@ const sidecar = {
   failures,
 };
 const outPath = join(here, "summary.json");
-readFileSync; // keep the import meaningful if the write is skipped
-(await import("node:fs")).writeFileSync(outPath, JSON.stringify(sidecar, null, 2) + "\n", "utf8");
+writeFileSync(outPath, JSON.stringify(sidecar, null, 2) + "\n", "utf8");
 console.log(`  wrote ${outPath}`);
 console.log("");
 

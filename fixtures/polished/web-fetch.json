@@ -4,7 +4,7 @@
   "tools": [
     {
       "name": "fetch_url",
-      "description": "Fetch a URL over HTTP(S) and return the response body as text. Follows redirects by default and decodes the charset from the Content-Type header. Use this for reading documentation pages or APIs; use fetch_url_bytes when the body is binary.",
+      "description": "Fetch a URL over HTTP(S) and return the response body as text. Follows redirects by default and decodes the charset from the Content-Type header. Use this for reading documentation pages or APIs; use fetch_binary when the body is binary.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -44,7 +44,7 @@
       }
     },
     {
-      "name": "fetch_url_bytes",
+      "name": "fetch_binary",
       "description": "Fetch a URL and return the raw body as base64 so binary content survives intact. Use this instead of fetch_url for images, PDFs, and archives. Returns `{ encoding, size, content }`.",
       "inputSchema": {
         "type": "object",
@@ -66,7 +66,7 @@
         "additionalProperties": false
       },
       "annotations": {
-        "title": "Fetch URL bytes",
+        "title": "Fetch binary",
         "readOnlyHint": true,
         "destructiveHint": false,
         "openWorldHint": true
@@ -74,7 +74,7 @@
     },
     {
       "name": "clear_http_cache",
-      "description": "Delete every cached HTTP response for the current session, forcing the next fetch to hit the network. Destructive to cache state but never touches user data. Returns the number of entries evicted.",
+      "description": "Delete every cached response entry for the current session, so the next lookup revalidates with its origin instead of serving stale data. Destructive to cache state but never touches user data. Returns the number of entries evicted.",
       "inputSchema": {
         "type": "object",
         "properties": {
